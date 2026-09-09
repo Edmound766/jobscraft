@@ -1,0 +1,26 @@
+import { createRouter as createTanStackRouter } from '@tanstack/solid-router'
+import { routeTree } from './routeTree.gen'
+
+import { getContext } from './integrations/tanstack-query/provider'
+
+export function getRouter() {
+  const router = createTanStackRouter({
+    routeTree,
+
+    context: getContext(),
+
+    scrollRestoration: true,
+    defaultPreload: 'intent',
+    defaultPreloadStaleTime: 0,
+  })
+
+  return router
+}
+
+export type RouterContext = ReturnType<typeof getContext>
+
+declare module '@tanstack/solid-router' {
+  interface Register {
+    router: ReturnType<typeof getRouter>
+  }
+}
