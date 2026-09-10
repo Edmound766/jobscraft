@@ -9,7 +9,7 @@ authors = [
 requires-python = ">=3.14"
 dependencies = [
     "litestar[standard]>=2.24.0",
-    "smolagents[litellm]>=1.26.0",
+    "smolagents[litellm,openai]>=1.26.0",
 ]
 
 # [project.scripts]

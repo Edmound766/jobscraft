@@ -3,12 +3,12 @@ import os
 
 from litestar import Litestar, post
 from msgspec import Struct
-from smolagents import LiteLLMModel
+from smolagents import OpenAIModel
 
-model = LiteLLMModel(
-    model_id="openrouter/openrouter/free",
+model = OpenAIModel(
+    model_id="openrouter/free",  # not "openrouter/openrouter/free"
     api_key=os.environ["OPENROUTER_API_KEY"],
-    api_base="https://openrouter.ai/api/v1"
+    api_base="https://openrouter.ai/api/v1",
 )
 
 

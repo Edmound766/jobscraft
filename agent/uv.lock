@@ -8,13 +8,13 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "litestar", extra = ["standard"] },
-    { name = "smolagents", extra = ["litellm"] },
+    { name = "smolagents", extra = ["litellm", "openai"] },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "litestar", extras = ["standard"], specifier = ">=2.24.0" },
-    { name = "smolagents", extras = ["litellm"], specifier = ">=1.26.0" },
+    { name = "smolagents", extras = ["litellm", "openai"], specifier = ">=1.26.0" },
 ]
 
 [[package]]
@@ -1298,6 +1298,9 @@ wheels = [
 [package.optional-dependencies]
 litellm = [
     { name = "litellm" },
+]
+openai = [
+    { name = "openai" },
 ]
 
 [[package]]
