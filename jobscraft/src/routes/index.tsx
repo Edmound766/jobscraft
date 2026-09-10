@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/solid-router'
+import { createFileRoute, Link } from '@tanstack/solid-router'
 
 export const Route = createFileRoute('/')({ component: App })
 
@@ -13,7 +13,7 @@ function App() {
           Build your career once. JobsCraft filters and ranks it into a role-tailored,
           instantly shareable page — no PDF, no login wall, no reformatting.
         </p>
-        <a href="/dashboard" class="btn-primary" style={{ "text-decoration": "none" }}>Build your repository</a>
+        <Link to="/dashboard" class="btn-primary" style={{ "text-decoration": "none" }}>Build your repository</Link>
       </section>
 
       <section style={{ "max-width": "1040px", margin: "0 auto 100px", padding: "0 40px", display: "grid", "grid-template-columns": "1fr 1fr 1fr", gap: "32px" }}>

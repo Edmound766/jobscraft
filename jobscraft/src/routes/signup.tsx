@@ -2,12 +2,13 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/solid-router'
 import { createSignal } from 'solid-js'
 import { authClient } from '~/lib/auth-client'
 
-export const Route = createFileRoute('/login')({
-  component: Login,
+export const Route = createFileRoute('/signup')({
+  component: Signup,
 })
 
-function Login() {
+function Signup() {
   const navigate = useNavigate()
+  const [name, setName] = createSignal('')
   const [email, setEmail] = createSignal('')
   const [password, setPassword] = createSignal('')
   const [error, setError] = createSignal('')
@@ -18,7 +19,8 @@ function Login() {
     setError('')
     setLoading(true)
 
-    const result = await authClient.signIn.email({
+    const result = await authClient.signUp.email({
+      name: name(),
       email: email(),
       password: password(),
     })
@@ -26,7 +28,7 @@ function Login() {
     setLoading(false)
 
     if (result.error) {
-      setError(result.error.message || 'Sign in failed')
+      setError(result.error.message || 'Could not create your account')
       return
     }
 
@@ -35,11 +37,21 @@ function Login() {
 
   return (
     <section class="auth-shell">
-      <h1>Sign in</h1>
+      <h1>Create your account</h1>
       <div class="ledger-rule" style={{ "--section-accent": "var(--signal)" }} />
-      <p class="auth-intro">Your career repository, wherever you left it.</p>
+      <p class="auth-intro">Build your career once — use it everywhere.</p>
 
       <form class="auth-panel" onSubmit={handleSubmit}>
+        <div class="field">
+          <label for="name">Name</label>
+          <input
+            id="name"
+            type="text"
+            value={name()}
+            onInput={(e) => setName(e.currentTarget.value)}
+            required
+          />
+        </div>
         <div class="field">
           <label for="email">Email</label>
           <input
@@ -63,12 +75,12 @@ function Login() {
         </div>
         {error() && <p class="auth-error">{error()}</p>}
         <button type="submit" class="btn-primary" disabled={loading()}>
-          {loading() ? 'Signing in…' : 'Sign in'}
+          {loading() ? 'Creating account…' : 'Create account'}
         </button>
       </form>
 
       <p class="auth-switch">
-        New here? <Link to="/signup">Create an account</Link>
+        Already have an account? <Link to="/login">Sign in</Link>
       </p>
     </section>
   )

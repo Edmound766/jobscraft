@@ -212,3 +212,74 @@ button {
   gap: 10px;
   align-items: center;
 }
+
+/* Auth (sign in / create account) */
+.auth-shell {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 64px 24px 96px;
+}
+
+.auth-shell h1 {
+  font-size: 26px;
+  margin: 0 0 8px;
+}
+
+.auth-shell .ledger-rule {
+  margin: 0 0 16px;
+}
+
+.auth-intro {
+  color: var(--graphite-soft);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 28px;
+}
+
+.auth-panel {
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 13px;
+  color: var(--graphite-soft);
+}
+
+.field input {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--vellum);
+  color: var(--graphite);
+  width: 100%;
+}
+.field input:focus {
+  outline: 2px solid var(--graphite);
+  outline-offset: 1px;
+}
+
+.auth-error {
+  color: var(--ember);
+  font-size: 13px;
+  margin: 0;
+}
+
+.auth-switch {
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--graphite-soft);
+}
+.auth-switch a { text-decoration: underline; }

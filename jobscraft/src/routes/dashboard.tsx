@@ -121,10 +121,10 @@ function ExperiencesSection() {
           </div>
           <div class="add-form-row">
             <form.Field name="startDate">
-              {(field) => <input placeholder="Start date" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+              {(field) => <input placeholder="Start date" type="date" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
             </form.Field>
             <form.Field name="endDate">
-              {(field) => <input placeholder="End date (blank if current)" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+              {(field) => <input placeholder="End date (blank if current)" type="date" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
             </form.Field>
           </div>
           <form.Field name="bulletsRaw">
