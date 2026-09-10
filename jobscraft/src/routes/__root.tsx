@@ -15,7 +15,7 @@ import Header from '../components/Header'
 
 import type { RouterContext } from '../router'
 
-import styleCss from '../styles.css?url'
+import styleCss from '../styles/app.css?url'
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   head: () => ({

@@ -17,7 +17,7 @@ export const Route = createFileRoute("/dashboard")({
     try {
       await ensureAuthenticated();
     } catch {
-      throw redirect({ to: "/demo/better-auth" });
+      throw redirect({ to: "/" });
     }
   },
   component: Dashboard,
