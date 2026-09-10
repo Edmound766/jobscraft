@@ -10,7 +10,11 @@
     "preview": "vite preview",
     "format": "biome format",
     "lint": "biome lint",
-    "check": "biome check"
+    "check": "biome check",
+    "db:generate": "bun --env-file=.env.local run drizzle-kit generate",
+    "db:push": "bun --env-file=.env.local run drizzle-kit push",
+    "db:migrate": "bun --env-file=.env.local run drizzle-kit migrate",
+    "db:studio": "bun --env-file=.env.local run drizzle-kit studio"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
