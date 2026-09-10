@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/solid-router";
+import { createFileRoute, Link, redirect } from "@tanstack/solid-router";
 import { createServerFn } from "@tanstack/solid-start";
 import { createSignal, For, Show } from "solid-js";
 import { createForm } from "@tanstack/solid-form";
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/dashboard")({
     try {
       await ensureAuthenticated();
     } catch {
-      throw redirect({ to: "/" });
+      throw redirect({ to: "/login" });
     }
   },
   component: Dashboard,
@@ -27,9 +27,12 @@ function Dashboard() {
   return (
     <main style={{ "max-width": "760px", margin: "0 auto", padding: "48px 40px 96px" }}>
       <h1 style={{ "font-size": "30px", margin: "0 0 8px" }}>Dashboard</h1>
-      <p style={{ color: "var(--graphite-soft)", "font-size": "15px", margin: "0 0 48px" }}>
+      <p style={{ color: "var(--graphite-soft)", "font-size": "15px", margin: "0 0 24px" }}>
         Your career repository — add it once, we'll match it to any role later.
       </p>
+      <Link to="/roles/new" class="btn-primary" style={{ "text-decoration": "none", display: "inline-block", margin: "0 0 48px" }}>
+        Tailor for a role
+      </Link>
       <ExperiencesSection />
       <ProjectsSection />
       <SkillsSection />

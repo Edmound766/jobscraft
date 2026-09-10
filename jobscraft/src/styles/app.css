@@ -283,3 +283,19 @@ button {
   color: var(--graphite-soft);
 }
 .auth-switch a { text-decoration: underline; }
+
+.input {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--vellum);
+  color: var(--graphite);
+  width: 100%;
+}
+textarea.input { resize: vertical; }
+.input:focus {
+  outline: 2px solid var(--graphite);
+  outline-offset: 1px;
+}
