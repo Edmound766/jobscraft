@@ -20,6 +20,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* Root path */
+    // "baseUrl":".",
+    "paths":{
+        "~/*":["./src/*"]
+    }
   }
 }
