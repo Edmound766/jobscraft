@@ -51,3 +51,25 @@ export const createRoleView = createServerFn({ method: "POST" })
 
     return row;
   });
+
+export const getRoleView = createServerFn({ method: "GET" })
+  .validator((slug: string) => slug)
+  .handler(async ({ data: slug }) => {
+    const [role] = await db.select().from(roleViews).where(eq(roleViews.slug, slug));
+    if (!role || !role.isPublished) return null;
+
+    const [allExperiences, allProjects] = await Promise.all([
+      db.select().from(experiences).where(eq(experiences.userId, role.userId)),
+      db.select().from(projects).where(eq(projects.userId, role.userId)),
+    ]);
+
+    const selectedExperiences = allExperiences
+      .filter((e) => role.selectedExperienceIds.includes(e.id))
+      .sort((a, b) => role.selectedExperienceIds.indexOf(a.id) - role.selectedExperienceIds.indexOf(b.id));
+
+    const selectedProjects = allProjects
+      .filter((p) => role.selectedProjectIds.includes(p.id))
+      .sort((a, b) => role.selectedProjectIds.indexOf(a.id) - role.selectedProjectIds.indexOf(b.id));
+
+    return { role, experiences: selectedExperiences, projects: selectedProjects };
+  });
