@@ -1,0 +1,1 @@
+ALTER TABLE "experiences" DROP COLUMN "sort_order";

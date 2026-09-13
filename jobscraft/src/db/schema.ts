@@ -12,7 +12,6 @@ export const experiences = pgTable("experiences", {
   endDate: text("end_date"), // null = current
   bullets: jsonb("bullets").$type<string[]>().notNull().default([]),
   techStack: jsonb("tech_stack").$type<string[]>().notNull().default([]),
-  sortOrder: integer("sort_order").notNull().default(0),
 });
 
 // Master repository — projects / proof-of-work
