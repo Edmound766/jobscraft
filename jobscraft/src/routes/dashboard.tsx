@@ -39,10 +39,49 @@ function Dashboard() {
           My roles
         </Link>
       </div>
+      <OnboardingChecklist />
       <ExperiencesSection />
       <ProjectsSection />
       <SkillsSection />
     </main>
+  );
+}
+
+function OnboardingChecklist() {
+  const experiencesQuery = useQuery(() => ({
+    queryKey: ["experiences"],
+    queryFn: () => listExperiences(),
+  }));
+  const projectsQuery = useQuery(() => ({
+    queryKey: ["projects"],
+    queryFn: () => listProjects(),
+  }));
+  const skillsQuery = useQuery(() => ({
+    queryKey: ["skills"],
+    queryFn: () => listSkills(),
+  }));
+
+  const stillLoading = () =>
+    experiencesQuery.isPending || projectsQuery.isPending || skillsQuery.isPending;
+
+  const hasAnyData = () =>
+    (experiencesQuery.data?.length ?? 0) > 0 ||
+    (projectsQuery.data?.length ?? 0) > 0 ||
+    (skillsQuery.data?.length ?? 0) > 0;
+
+  return (
+    <Show when={!stillLoading() && !hasAnyData()}>
+      <div class="bg-vellum-deep rounded-[3px] px-5 py-4 mb-10">
+        <p class="text-[14px] font-semibold mb-2">Get started</p>
+        <ol class="text-[14px] text-graphite-soft pl-5 flex flex-col gap-1">
+          <li>Add your experience and projects below — this is what gets matched to roles.</li>
+          <li>Add a few skills for quick keyword matching.</li>
+          <li>
+            Then <Link to="/roles/new" class="underline">tailor a role</Link> from a job description.
+          </li>
+        </ol>
+      </div>
+    </Show>
   );
 }
 
