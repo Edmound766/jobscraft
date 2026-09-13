@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/solid-query'
 import { createFileRoute, Link, redirect } from '@tanstack/solid-router'
 import { createServerFn } from '@tanstack/solid-start'
 import { For, Show } from 'solid-js'
-import { listRoleViews, togglePublish } from '~/lib/roles'
+import { deleteRoleView, listRoleViews, togglePublish } from '~/lib/roles'
 import { requireUser } from '~/lib/session'
 
 const ensureAuthenticated = createServerFn({ method: 'GET' }).handler(async () => {
@@ -34,6 +34,12 @@ function RoleList() {
 
   const copyLink = (slug:string)=>{
     navigator.clipboard.writeText(`${window.location.origin}/u/${slug}`)
+  }
+
+  const handleDelete = async(id:string)=>{
+    if (!confirm("Delete this page? This can't be undone.")) return
+    await deleteRoleView({data:id})
+    queryClient.invalidateQueries({queryKey:["roleViews"]})
   }
 return (
     <div style={{ "max-width": "720px", margin: "60px auto", padding: "0 40px" }}>
@@ -67,6 +73,7 @@ return (
               <button class="btn-secondary" onClick={() => handleToggle(role.id)}>
                 {role.isPublished ? "Unpublish" : "Publish"}
               </button>
+              <button class="remove-btn" onClick={() => handleDelete(role.id)}>Delete</button>
             </div>
           </div>
         )}

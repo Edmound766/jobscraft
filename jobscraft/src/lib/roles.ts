@@ -120,7 +120,7 @@ export const createRoleView = createServerFn({ method: "POST" })
         selectedExperienceIds,
         selectedProjectIds,
         matchScore,
-        isPublished: true,
+        isPublished: false,
       })
       .returning();
 
@@ -166,4 +166,13 @@ export const togglePublish = createServerFn({method:"POST"})
   const [row] = await db.select().from(roleViews).where(and(eq(roleViews.id,id),eq(roleViews.userId,user.id)))
   if(!row) throw new Error("not found ")
   await db.update(roleViews).set({isPublished:!row.isPublished}).where(eq(roleViews.id, id))
+})
+
+export const deleteRoleView = createServerFn({method:"POST"})
+.validator((id:string)=>id)
+.handler(async({data:id})=>{
+  const user = await requireUser()
+  const [row] = await db.select().from(roleViews).where(and(eq(roleViews.id,id),eq(roleViews.userId,user.id)))
+  if(!row) throw new Error("not found ")
+  await db.delete(roleViews).where(eq(roleViews.id, id))
 })
