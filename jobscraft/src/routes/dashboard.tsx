@@ -6,6 +6,8 @@ import { useQuery, useQueryClient } from "@tanstack/solid-query";
 import { createExperience, deleteExperience, listExperiences, updateExperience } from "~/lib/experience";
 import { createProject, deleteProject, listProjects, updateProject } from "~/lib/project";
 import { createSkill, deleteSkill, listSkills, updateSkill } from "~/lib/skill";
+import { createEducation, deleteEducation, listEducation, updateEducation } from "~/lib/education";
+import { createCertification, deleteCertification, listCertifications, updateCertification } from "~/lib/certification";
 import { requireUser } from "~/lib/session";
 
 const ensureAuthenticated = createServerFn({ method: "GET" }).handler(async () => {
@@ -42,6 +44,8 @@ function Dashboard() {
       <OnboardingChecklist />
       <ExperiencesSection />
       <ProjectsSection />
+      <EducationSection />
+      <CertificationsSection />
       <SkillsSection />
     </main>
   );
@@ -591,6 +595,347 @@ function SkillsSection() {
           <div class="add-form-actions">
             <button type="submit" class="btn-primary" disabled={isSubmitting()}>
               {isSubmitting() ? "Adding…" : "Add skill"}
+            </button>
+            <button type="button" class="add-toggle p-0" disabled={isSubmitting()} onClick={() => setIsAdding(false)}>Cancel</button>
+          </div>
+        </form>
+      </Show>
+    </section>
+  );
+}
+
+function EducationRow(props: {
+  edu: Awaited<ReturnType<typeof listEducation>>[number];
+  onDelete: (id: string) => void;
+}) {
+  const queryClient = useQueryClient();
+  const [editing, setEditing] = createSignal(false);
+  const [isDeleting, setIsDeleting] = createSignal(false);
+
+  const form = createForm(() => ({
+    defaultValues: {
+      school: props.edu.school,
+      degree: props.edu.degree,
+      fieldOfStudy: props.edu.fieldOfStudy ?? "",
+      startDate: props.edu.startDate,
+      endDate: props.edu.endDate ?? "",
+    },
+    onSubmit: async ({ value }) => {
+      await updateEducation({
+        data: {
+          id: props.edu.id,
+          school: value.school,
+          degree: value.degree,
+          fieldOfStudy: value.fieldOfStudy || undefined,
+          startDate: value.startDate,
+          endDate: value.endDate || undefined,
+        },
+      });
+      queryClient.invalidateQueries({ queryKey: ["education"] });
+      setEditing(false);
+    },
+  }));
+  const isSubmitting = form.useSelector((state) => state.isSubmitting);
+
+  return (
+    <Show
+      when={!editing()}
+      fallback={
+        <form class="add-form" onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }}>
+          <div class="add-form-row">
+            <form.Field name="school">
+              {(field) => <input class="input" placeholder="School" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+            <form.Field name="degree">
+              {(field) => <input class="input" placeholder="Degree" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+          </div>
+          <form.Field name="fieldOfStudy">
+            {(field) => <input class="input" placeholder="Field of study (optional)" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+          </form.Field>
+          <div class="add-form-row">
+            <form.Field name="startDate">
+              {(field) => <input class="input" placeholder="Start date" type="date" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+            <form.Field name="endDate">
+              {(field) => <input class="input" placeholder="End date (blank if in progress)" type="date" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+          </div>
+          <div class="add-form-actions">
+            <button type="submit" class="btn-primary" disabled={isSubmitting()}>
+              {isSubmitting() ? "Saving…" : "Save"}
+            </button>
+            <button type="button" class="btn-secondary" disabled={isSubmitting()} onClick={() => setEditing(false)}>Cancel</button>
+          </div>
+        </form>
+      }
+    >
+      <div class="ledger-row">
+        <div class="ledger-row-main">
+          <div class="ledger-row-title">{props.edu.degree} — {props.edu.school}</div>
+          <div class="ledger-row-meta">
+            {props.edu.fieldOfStudy ? `${props.edu.fieldOfStudy} · ` : ""}
+            {props.edu.startDate} — {props.edu.endDate || "In progress"}
+          </div>
+        </div>
+        <div class="flex gap-2 shrink-0">
+          <button class="btn-secondary" disabled={isDeleting()} onClick={() => setEditing(true)}>Edit</button>
+          <button
+            class="remove-btn"
+            disabled={isDeleting()}
+            onClick={async () => { setIsDeleting(true); await props.onDelete(props.edu.id); }}
+          >
+            {isDeleting() ? "Removing…" : "Remove"}
+          </button>
+        </div>
+      </div>
+    </Show>
+  );
+}
+
+function EducationSection() {
+  const queryClient = useQueryClient();
+  const [isAdding, setIsAdding] = createSignal(false);
+  const educationQuery = useQuery(() => ({
+    queryKey: ["education"],
+    queryFn: () => listEducation(),
+  }));
+
+  const form = createForm(() => ({
+    defaultValues: { school: "", degree: "", fieldOfStudy: "", startDate: "", endDate: "" },
+    onSubmit: async ({ value }) => {
+      await createEducation({
+        data: {
+          school: value.school,
+          degree: value.degree,
+          fieldOfStudy: value.fieldOfStudy || undefined,
+          startDate: value.startDate,
+          endDate: value.endDate || undefined,
+        },
+      });
+      queryClient.invalidateQueries({ queryKey: ["education"] });
+      form.reset();
+      setIsAdding(false);
+    },
+  }));
+  const isSubmitting = form.useSelector((state) => state.isSubmitting);
+
+  const handleDelete = async (id: string) => {
+    await deleteEducation({ data: id });
+    queryClient.invalidateQueries({ queryKey: ["education"] });
+  };
+
+  return (
+    <section class="ledger-section" style={{ "--section-accent": "var(--signal)" }}>
+      <h2>Education</h2>
+      <div class="ledger-rule" />
+
+      <Show
+        when={(educationQuery.data ?? []).length > 0}
+        fallback={<p class="ledger-empty">No education yet — add your first one below.</p>}
+      >
+        <For each={educationQuery.data ?? []}>
+          {(edu) => <EducationRow edu={edu} onDelete={handleDelete} />}
+        </For>
+      </Show>
+
+      <Show
+        when={isAdding()}
+        fallback={
+          <button class="add-toggle" onClick={() => setIsAdding(true)}>+ Add education</button>
+        }
+      >
+        <form class="add-form" onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }}>
+          <div class="add-form-row">
+            <form.Field name="school">
+              {(field) => <input placeholder="School" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+            <form.Field name="degree">
+              {(field) => <input placeholder="Degree" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+          </div>
+          <form.Field name="fieldOfStudy">
+            {(field) => <input placeholder="Field of study (optional)" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+          </form.Field>
+          <div class="add-form-row">
+            <form.Field name="startDate">
+              {(field) => <input placeholder="Start date" type="date" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+            <form.Field name="endDate">
+              {(field) => <input placeholder="End date (blank if in progress)" type="date" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+          </div>
+          <div class="add-form-actions">
+            <button type="submit" class="btn-primary" disabled={isSubmitting()}>
+              {isSubmitting() ? "Adding…" : "Add education"}
+            </button>
+            <button type="button" class="add-toggle p-0" disabled={isSubmitting()} onClick={() => setIsAdding(false)}>Cancel</button>
+          </div>
+        </form>
+      </Show>
+    </section>
+  );
+}
+
+function CertificationRow(props: {
+  cert: Awaited<ReturnType<typeof listCertifications>>[number];
+  onDelete: (id: string) => void;
+}) {
+  const queryClient = useQueryClient();
+  const [editing, setEditing] = createSignal(false);
+  const [isDeleting, setIsDeleting] = createSignal(false);
+
+  const form = createForm(() => ({
+    defaultValues: {
+      name: props.cert.name,
+      issuer: props.cert.issuer,
+      issueDate: props.cert.issueDate ?? "",
+      credentialUrl: props.cert.credentialUrl ?? "",
+    },
+    onSubmit: async ({ value }) => {
+      await updateCertification({
+        data: {
+          id: props.cert.id,
+          name: value.name,
+          issuer: value.issuer,
+          issueDate: value.issueDate || undefined,
+          credentialUrl: value.credentialUrl || undefined,
+        },
+      });
+      queryClient.invalidateQueries({ queryKey: ["certifications"] });
+      setEditing(false);
+    },
+  }));
+  const isSubmitting = form.useSelector((state) => state.isSubmitting);
+
+  return (
+    <Show
+      when={!editing()}
+      fallback={
+        <form class="add-form" onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }}>
+          <div class="add-form-row">
+            <form.Field name="name">
+              {(field) => <input class="input" placeholder="Certification name" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+            <form.Field name="issuer">
+              {(field) => <input class="input" placeholder="Issuer" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+          </div>
+          <div class="add-form-row">
+            <form.Field name="issueDate">
+              {(field) => <input class="input" placeholder="Issue date (optional)" type="date" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+            <form.Field name="credentialUrl">
+              {(field) => <input class="input" placeholder="Credential URL (optional)" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+          </div>
+          <div class="add-form-actions">
+            <button type="submit" class="btn-primary" disabled={isSubmitting()}>
+              {isSubmitting() ? "Saving…" : "Save"}
+            </button>
+            <button type="button" class="btn-secondary" disabled={isSubmitting()} onClick={() => setEditing(false)}>Cancel</button>
+          </div>
+        </form>
+      }
+    >
+      <div class="ledger-row">
+        <div class="ledger-row-main">
+          <div class="ledger-row-title">{props.cert.name} — {props.cert.issuer}</div>
+          <Show when={props.cert.issueDate}>
+            <div class="ledger-row-meta">{props.cert.issueDate}</div>
+          </Show>
+          <Show when={props.cert.credentialUrl}>
+            <div class="ledger-row-links">
+              <a href={props.cert.credentialUrl!} target="_blank" rel="noreferrer">Credential</a>
+            </div>
+          </Show>
+        </div>
+        <div class="flex gap-2 shrink-0">
+          <button class="btn-secondary" disabled={isDeleting()} onClick={() => setEditing(true)}>Edit</button>
+          <button
+            class="remove-btn"
+            disabled={isDeleting()}
+            onClick={async () => { setIsDeleting(true); await props.onDelete(props.cert.id); }}
+          >
+            {isDeleting() ? "Removing…" : "Remove"}
+          </button>
+        </div>
+      </div>
+    </Show>
+  );
+}
+
+function CertificationsSection() {
+  const queryClient = useQueryClient();
+  const [isAdding, setIsAdding] = createSignal(false);
+  const certificationsQuery = useQuery(() => ({
+    queryKey: ["certifications"],
+    queryFn: () => listCertifications(),
+  }));
+
+  const form = createForm(() => ({
+    defaultValues: { name: "", issuer: "", issueDate: "", credentialUrl: "" },
+    onSubmit: async ({ value }) => {
+      await createCertification({
+        data: {
+          name: value.name,
+          issuer: value.issuer,
+          issueDate: value.issueDate || undefined,
+          credentialUrl: value.credentialUrl || undefined,
+        },
+      });
+      queryClient.invalidateQueries({ queryKey: ["certifications"] });
+      form.reset();
+      setIsAdding(false);
+    },
+  }));
+  const isSubmitting = form.useSelector((state) => state.isSubmitting);
+
+  const handleDelete = async (id: string) => {
+    await deleteCertification({ data: id });
+    queryClient.invalidateQueries({ queryKey: ["certifications"] });
+  };
+
+  return (
+    <section class="ledger-section" style={{ "--section-accent": "var(--ember)" }}>
+      <h2>Certifications</h2>
+      <div class="ledger-rule" />
+
+      <Show
+        when={(certificationsQuery.data ?? []).length > 0}
+        fallback={<p class="ledger-empty">No certifications yet — add your first one below.</p>}
+      >
+        <For each={certificationsQuery.data ?? []}>
+          {(cert) => <CertificationRow cert={cert} onDelete={handleDelete} />}
+        </For>
+      </Show>
+
+      <Show
+        when={isAdding()}
+        fallback={
+          <button class="add-toggle" onClick={() => setIsAdding(true)}>+ Add certification</button>
+        }
+      >
+        <form class="add-form" onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }}>
+          <div class="add-form-row">
+            <form.Field name="name">
+              {(field) => <input placeholder="Certification name" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+            <form.Field name="issuer">
+              {(field) => <input placeholder="Issuer" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+          </div>
+          <div class="add-form-row">
+            <form.Field name="issueDate">
+              {(field) => <input placeholder="Issue date (optional)" type="date" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+            <form.Field name="credentialUrl">
+              {(field) => <input placeholder="Credential URL (optional)" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+          </div>
+          <div class="add-form-actions">
+            <button type="submit" class="btn-primary" disabled={isSubmitting()}>
+              {isSubmitting() ? "Adding…" : "Add certification"}
             </button>
             <button type="button" class="add-toggle p-0" disabled={isSubmitting()} onClick={() => setIsAdding(false)}>Cancel</button>
           </div>
