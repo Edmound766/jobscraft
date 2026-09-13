@@ -1,7 +1,8 @@
 import { createServerFn } from "@tanstack/solid-start";
 import { and, desc, eq, type InferSelectModel } from "drizzle-orm";
 import { db } from "~/db";
-import { experiences, projects, roleViews } from "~/db/schema";
+import { certifications, education, experiences, projects, roleViews, skills } from "~/db/schema";
+import { user as userTable } from "~/db/auth-schema";
 import { semanticRank } from "./agentRank";
 import { rankEntries } from "./rank";
 import { getOptionalUser, requireUser } from "./session";
@@ -84,9 +85,11 @@ export const createRoleView = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const user = await requireUser();
 
-    const [userExperiences, userProjects] = await Promise.all([
+    const [userExperiences, userProjects, userEducation, userCertifications] = await Promise.all([
       db.select().from(experiences).where(eq(experiences.userId, user.id)),
       db.select().from(projects).where(eq(projects.userId, user.id)),
+      db.select().from(education).where(eq(education.userId, user.id)),
+      db.select().from(certifications).where(eq(certifications.userId, user.id)),
     ]);
 
     let selectedExperienceIds: string[];
@@ -110,6 +113,13 @@ export const createRoleView = createServerFn({ method: "POST" })
 
     const slug = await generateUniqueSlug(user.name ?? "candidate", data.roleTitle);
 
+    // Education/certifications are credentials, not achievements to filter by
+    // relevance — a resume doesn't trim your degree because the job
+    // description didn't mention it, so these are included in full rather
+    // than run through the ranking functions above.
+    const selectedEducationIds = userEducation.map((e) => e.id);
+    const selectedCertificationIds = userCertifications.map((c) => c.id);
+
     const [row] = await db
       .insert(roleViews)
       .values({
@@ -119,6 +129,8 @@ export const createRoleView = createServerFn({ method: "POST" })
         jobDescription: data.jobDescription,
         selectedExperienceIds,
         selectedProjectIds,
+        selectedEducationIds,
+        selectedCertificationIds,
         matchScore,
         isPublished: false,
       })
@@ -133,15 +145,22 @@ export const getRoleView = createServerFn({ method: "GET" })
     const [role] = await db.select().from(roleViews).where(eq(roleViews.slug, slug));
     if (!role) return null;
 
-    if (!role.isPublished) {
+    const session = await getOptionalUser();
+    const isOwner = session?.id === role.userId;
+
+    if (!role.isPublished && !isOwner) {
       // unpublished: only the owner may view it (as a preview)
-      const session = await getOptionalUser(); // see below
-      if (!session || session.id !== role.userId) return null;
+      return null;
     }
 
-    const [allExperiences, allProjects] = await Promise.all([
+    const [author] = await db.select().from(userTable).where(eq(userTable.id, role.userId));
+
+    const [allExperiences, allProjects, allEducation, allCertifications, allSkills] = await Promise.all([
       db.select().from(experiences).where(eq(experiences.userId, role.userId)),
       db.select().from(projects).where(eq(projects.userId, role.userId)),
+      db.select().from(education).where(eq(education.userId, role.userId)),
+      db.select().from(certifications).where(eq(certifications.userId, role.userId)),
+      db.select().from(skills).where(eq(skills.userId, role.userId)),
     ]);
 
     const selectedExperiences = allExperiences
@@ -152,7 +171,24 @@ export const getRoleView = createServerFn({ method: "GET" })
       .filter((p) => role.selectedProjectIds.includes(p.id))
       .sort((a, b) => role.selectedProjectIds.indexOf(a.id) - role.selectedProjectIds.indexOf(b.id));
 
-    return { role, experiences: selectedExperiences, projects: selectedProjects };
+    const selectedEducation = allEducation
+      .filter((e) => role.selectedEducationIds.includes(e.id))
+      .sort((a, b) => role.selectedEducationIds.indexOf(a.id) - role.selectedEducationIds.indexOf(b.id));
+
+    const selectedCertifications = allCertifications
+      .filter((c) => role.selectedCertificationIds.includes(c.id))
+      .sort((a, b) => role.selectedCertificationIds.indexOf(a.id) - role.selectedCertificationIds.indexOf(b.id));
+
+    return {
+      role,
+      author: { name: author?.name ?? "Candidate", email: author?.email },
+      isOwner,
+      experiences: selectedExperiences,
+      projects: selectedProjects,
+      education: selectedEducation,
+      certifications: selectedCertifications,
+      skills: allSkills,
+    };
   });
 export const listRoleViews= createServerFn({method:"GET"})
 .handler(async()=>{
@@ -180,3 +216,24 @@ export const deleteRoleView = createServerFn({method:"POST"})
   if(!row) throw new Error("not found ")
   await db.delete(roleViews).where(eq(roleViews.id, id))
 })
+
+export const updateRoleViewSelection = createServerFn({ method: "POST" })
+  .validator((d: {
+    id: string;
+    roleTitle: string;
+    selectedExperienceIds: string[];
+    selectedProjectIds: string[];
+    selectedEducationIds: string[];
+    selectedCertificationIds: string[];
+  }) => d)
+  .handler(async ({ data }) => {
+    const user = await requireUser();
+    const { id, ...updates } = data;
+    const [row] = await db
+      .update(roleViews)
+      .set(updates)
+      .where(and(eq(roleViews.id, id), eq(roleViews.userId, user.id)))
+      .returning();
+    if (!row) throw new Error("not found");
+    return row;
+  });
