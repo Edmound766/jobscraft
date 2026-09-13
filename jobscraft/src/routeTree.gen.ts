@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as RolesIndexRouteImport } from './routes/roles.index'
 import { Route as RolesNewRouteImport } from './routes/roles.new'
@@ -37,6 +38,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
   '/roles/new': typeof RolesNewRoute
   '/u/$slug': typeof USlugRoute
@@ -81,6 +88,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
   '/roles/new': typeof RolesNewRoute
   '/u/$slug': typeof USlugRoute
@@ -93,6 +101,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
   '/roles/new': typeof RolesNewRoute
   '/u/$slug': typeof USlugRoute
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/dashboard'
     | '/login'
+    | '/privacy'
     | '/signup'
     | '/roles/new'
     | '/u/$slug'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/dashboard'
     | '/login'
+    | '/privacy'
     | '/signup'
     | '/roles/new'
     | '/u/$slug'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/dashboard'
     | '/login'
+    | '/privacy'
     | '/signup'
     | '/roles/new'
     | '/u/$slug'
@@ -140,6 +152,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
+  PrivacyRoute: typeof PrivacyRoute
   SignupRoute: typeof SignupRoute
   RolesNewRoute: typeof RolesNewRoute
   USlugRoute: typeof USlugRoute
@@ -175,6 +188,13 @@ declare module '@tanstack/solid-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -220,6 +240,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
+  PrivacyRoute: PrivacyRoute,
   SignupRoute: SignupRoute,
   RolesNewRoute: RolesNewRoute,
   USlugRoute: USlugRoute,

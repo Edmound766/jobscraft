@@ -36,6 +36,10 @@ function App() {
           </p>
         </div>
       </section>
+
+      <footer style={{ "max-width": "1040px", margin: "0 auto 60px", padding: "0 40px", "text-align": "center" }}>
+        <Link to="/privacy" style={{ color: "var(--graphite-soft)", "font-size": "13px" }}>Privacy</Link>
+      </footer>
     </div>
   )
 }
