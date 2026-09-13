@@ -29,10 +29,14 @@ function RoleList() {
   }))
   const [copiedId, setCopiedId] = createSignal<string | null>(null)
   const [confirmingDeleteId, setConfirmingDeleteId] = createSignal<string | null>(null)
+  const [togglingId, setTogglingId] = createSignal<string | null>(null)
+  const [deletingId, setDeletingId] = createSignal<string | null>(null)
 
   const handleToggle = async(id:string)=>{
+    setTogglingId(id)
     await togglePublish({data:id})
     queryClient.invalidateQueries({queryKey:["roleViews"]})
+    setTogglingId(null)
   }
 
   const copyLink = (id:string, slug:string)=>{
@@ -42,9 +46,11 @@ function RoleList() {
   }
 
   const handleDelete = async(id:string)=>{
+    setDeletingId(id)
     await deleteRoleView({data:id})
     queryClient.invalidateQueries({queryKey:["roleViews"]})
     setConfirmingDeleteId(null)
+    setDeletingId(null)
   }
 return (
     <div class="max-w-[720px] my-15 mx-auto px-5 sm:px-10">
@@ -73,8 +79,10 @@ return (
               <button class="btn-secondary" onClick={() => copyLink(role.id, role.slug)}>
                 {copiedId() === role.id ? "Copied!" : "Copy link"}
               </button>
-              <button class="btn-secondary" onClick={() => handleToggle(role.id)}>
-                {role.isPublished ? "Unpublish" : "Publish"}
+              <button class="btn-secondary" disabled={togglingId() === role.id} onClick={() => handleToggle(role.id)}>
+                {togglingId() === role.id
+                  ? (role.isPublished ? "Unpublishing…" : "Publishing…")
+                  : (role.isPublished ? "Unpublish" : "Publish")}
               </button>
               <Show
                 when={confirmingDeleteId() === role.id}
@@ -83,8 +91,10 @@ return (
                 }
               >
                 <span class="text-[13px] text-graphite-soft">Delete?</span>
-                <button class="remove-btn" onClick={() => handleDelete(role.id)}>Yes</button>
-                <button class="remove-btn" onClick={() => setConfirmingDeleteId(null)}>Cancel</button>
+                <button class="remove-btn" disabled={deletingId() === role.id} onClick={() => handleDelete(role.id)}>
+                  {deletingId() === role.id ? "Deleting…" : "Yes"}
+                </button>
+                <button class="remove-btn" disabled={deletingId() === role.id} onClick={() => setConfirmingDeleteId(null)}>Cancel</button>
               </Show>
             </div>
           </div>
