@@ -27,7 +27,7 @@ export const Route = createFileRoute("/dashboard")({
 function Dashboard() {
   return (
     <main class="max-w-[760px] mx-auto pt-12 px-5 sm:px-10 pb-24">
-      <h1 class="text-[30px] mb-2">Dashboard</h1>
+      <h1 class="text-[28px] mb-2">Dashboard</h1>
       <p class="text-graphite-soft text-[15px] mb-6">
         Your career repository — add it once, we'll match it to any role later.
       </p>

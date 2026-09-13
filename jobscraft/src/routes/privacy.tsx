@@ -8,7 +8,7 @@ export const Route = createFileRoute('/privacy')({
 function Privacy() {
   return (
     <div class="max-w-[640px] mt-[60px] mx-auto mb-[100px] px-5 sm:px-10">
-      <h1 class="serif text-[32px] mb-6">Privacy</h1>
+      <h1 class="serif text-[28px] mb-6">Privacy</h1>
 
       <p class="text-[15px] leading-[1.7] mb-4">
         JobsCraft is currently in early testing. Here's what you should know:

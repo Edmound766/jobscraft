@@ -9,11 +9,33 @@ function App() {
         <h1 class="text-[28px] sm:text-[40px] mb-[18px]">
           Stop reformatting your résumé for every job.
         </h1>
-        <p class="text-graphite-soft text-base leading-[1.6] mb-8">
+        <p class="text-graphite-soft text-[15px] leading-[1.6] mb-8">
           Build your career once. JobsCraft filters and ranks it into a role-tailored,
           instantly shareable page — no PDF, no login wall, no reformatting.
         </p>
         <Link to="/dashboard" class="btn-primary no-underline">Build your repository</Link>
+      </section>
+
+      <section class="max-w-[560px] mx-auto mb-[100px] px-5 sm:px-10">
+        <p class="text-graphite-soft text-[13px] text-center mb-3">What a tailored page looks like</p>
+        <div class="text-center mb-4">
+          <p class="serif text-[21px] mb-1">Senior Backend Engineer</p>
+          <p class="text-graphite-soft text-[13px]">Match score: 92%</p>
+        </div>
+        <div class="bg-[#FBFAF6] border border-line rounded-[3px] px-[22px] py-5">
+          <div class="flex flex-wrap gap-2 justify-between">
+            <strong>Staff Engineer</strong>
+            <span class="text-graphite-soft text-[13px] shrink-0">2021 — Present</span>
+          </div>
+          <div class="text-graphite-soft text-[13px] mb-2.5">Fintech Co</div>
+          <ul class="mb-2.5 pl-[18px]">
+            <li class="text-[14px] leading-[1.7]">Led migration to an event-driven architecture, cutting p95 latency 40%</li>
+          </ul>
+          <div class="flex gap-1.5 flex-wrap">
+            <span class="tag">Postgres</span>
+            <span class="tag">Node.js</span>
+          </div>
+        </div>
       </section>
 
       <section class="max-w-[1040px] mx-auto mb-[100px] px-5 sm:px-10 grid grid-cols-1 sm:grid-cols-3 gap-8">

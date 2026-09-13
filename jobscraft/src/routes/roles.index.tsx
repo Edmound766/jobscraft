@@ -68,7 +68,7 @@ return (
           <div class="bg-[#FBFAF6] border border-line rounded-[3px] px-[22px] py-[18px] mb-3 flex flex-wrap justify-between items-center gap-3">
             <div class="flex-1 min-w-0">
               <strong class="[overflow-wrap:anywhere]">{role.roleTitle}</strong>
-              <div class="text-[12.5px] text-graphite-soft [overflow-wrap:anywhere]">
+              <div class="text-[13px] text-graphite-soft [overflow-wrap:anywhere]">
                 /u/{role.slug} · {role.matchScore}% match · {role.isPublished ? "Published" : "Unpublished"}
               </div>
             </div>

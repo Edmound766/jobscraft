@@ -88,7 +88,7 @@
   .auth-shell {
     @apply max-w-[420px] mx-auto px-6 pt-16 pb-24;
   }
-  .auth-shell h1 { @apply text-[26px] mb-2; }
+  .auth-shell h1 { @apply text-[28px] mb-2; }
   .auth-shell .ledger-rule { @apply mb-4; }
   .auth-intro {
     @apply text-graphite-soft text-[14px] leading-[1.6] mb-7;
