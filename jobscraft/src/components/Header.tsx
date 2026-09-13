@@ -28,7 +28,10 @@ export default function Header() {
 
   return (
     <header class="flex justify-between items-center py-5 px-5 sm:px-10 border-b border-line relative">
-      <Link to="/" class="serif text-[20px]" onClick={closeMenu}>jobscraft</Link>
+      <Link to="/" class="flex items-center gap-2 serif text-[20px]" onClick={closeMenu}>
+        <img src="/favicon.svg" alt="" class="w-5 h-5 rounded-[3px]" />
+        jobscraft
+      </Link>
 
       <button
         ref={toggleRef}

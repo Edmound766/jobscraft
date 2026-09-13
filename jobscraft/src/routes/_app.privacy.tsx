@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/solid-router'
 
-export const Route = createFileRoute('/privacy')({
+export const Route = createFileRoute('/_app/privacy')({
   head: () => ({ meta: [{ title: 'Privacy · jobscraft' }] }),
   component: Privacy,
 })

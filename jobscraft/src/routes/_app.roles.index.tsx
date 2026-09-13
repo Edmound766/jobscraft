@@ -9,7 +9,7 @@ const ensureAuthenticated = createServerFn({ method: 'GET' }).handler(async () =
   await requireUser()
 })
 
-export const Route = createFileRoute('/roles/')({
+export const Route = createFileRoute('/_app/roles/')({
   beforeLoad: async () => {
     try {
       await ensureAuthenticated()

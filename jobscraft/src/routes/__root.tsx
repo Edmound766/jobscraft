@@ -11,8 +11,6 @@ import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { HydrationScript } from 'solid-js/web'
 import { Suspense } from 'solid-js'
 
-import Header from '../components/Header'
-
 import type { RouterContext } from '../router'
 
 import styleCss from '../styles/app.css?url'
@@ -62,7 +60,6 @@ function RootComponent() {
         <HeadContent />
         <QueryClientProvider client={context().queryClient}>
           <Suspense>
-            <Header />
             <Outlet />
             <TanStackRouterDevtools />
             <SolidQueryDevtools />

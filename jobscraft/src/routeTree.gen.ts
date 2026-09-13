@@ -9,55 +9,60 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as RolesIndexRouteImport } from './routes/roles.index'
-import { Route as RolesNewRouteImport } from './routes/roles.new'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
+import { Route as AppLoginRouteImport } from './routes/_app.login'
+import { Route as AppPrivacyRouteImport } from './routes/_app.privacy'
+import { Route as AppSignupRouteImport } from './routes/_app.signup'
 import { Route as USlugRouteImport } from './routes/u.$slug'
+import { Route as AppRolesIndexRouteImport } from './routes/_app.roles.index'
+import { Route as AppRolesNewRouteImport } from './routes/_app.roles.new'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
-const IndexRoute = IndexRouteImport.update({
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
+const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
 } as any)
-const LoginRoute = LoginRouteImport.update({
+const AppLoginRoute = AppLoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
 } as any)
-const PrivacyRoute = PrivacyRouteImport.update({
+const AppPrivacyRoute = AppPrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
 } as any)
-const SignupRoute = SignupRouteImport.update({
+const AppSignupRoute = AppSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RolesIndexRoute = RolesIndexRouteImport.update({
-  id: '/roles/',
-  path: '/roles/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RolesNewRoute = RolesNewRouteImport.update({
-  id: '/roles/new',
-  path: '/roles/new',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
 } as any)
 const USlugRoute = USlugRouteImport.update({
   id: '/u/$slug',
   path: '/u/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppRolesIndexRoute = AppRolesIndexRouteImport.update({
+  id: '/roles/',
+  path: '/roles/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRolesNewRoute = AppRolesNewRouteImport.update({
+  id: '/roles/new',
+  path: '/roles/new',
+  getParentRoute: () => AppRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -66,38 +71,39 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/login': typeof LoginRoute
-  '/privacy': typeof PrivacyRoute
-  '/signup': typeof SignupRoute
-  '/roles/new': typeof RolesNewRoute
+  '/': typeof AppIndexRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/login': typeof AppLoginRoute
+  '/privacy': typeof AppPrivacyRoute
+  '/signup': typeof AppSignupRoute
   '/u/$slug': typeof USlugRoute
-  '/roles/': typeof RolesIndexRoute
+  '/roles/new': typeof AppRolesNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/roles/': typeof AppRolesIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/login': typeof LoginRoute
-  '/privacy': typeof PrivacyRoute
-  '/signup': typeof SignupRoute
-  '/roles/new': typeof RolesNewRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/login': typeof AppLoginRoute
+  '/privacy': typeof AppPrivacyRoute
+  '/signup': typeof AppSignupRoute
   '/u/$slug': typeof USlugRoute
-  '/roles': typeof RolesIndexRoute
+  '/': typeof AppIndexRoute
+  '/roles/new': typeof AppRolesNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/roles': typeof AppRolesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/login': typeof LoginRoute
-  '/privacy': typeof PrivacyRoute
-  '/signup': typeof SignupRoute
-  '/roles/new': typeof RolesNewRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/login': typeof AppLoginRoute
+  '/_app/privacy': typeof AppPrivacyRoute
+  '/_app/signup': typeof AppSignupRoute
   '/u/$slug': typeof USlugRoute
-  '/roles/': typeof RolesIndexRoute
+  '/_app/': typeof AppIndexRoute
+  '/_app/roles/new': typeof AppRolesNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/_app/roles/': typeof AppRolesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -107,96 +113,84 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacy'
     | '/signup'
-    | '/roles/new'
     | '/u/$slug'
-    | '/roles/'
+    | '/roles/new'
     | '/api/auth/$'
+    | '/roles/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/dashboard'
     | '/login'
     | '/privacy'
     | '/signup'
-    | '/roles/new'
     | '/u/$slug'
-    | '/roles'
+    | '/'
+    | '/roles/new'
     | '/api/auth/$'
+    | '/roles'
   id:
     | '__root__'
-    | '/'
-    | '/dashboard'
-    | '/login'
-    | '/privacy'
-    | '/signup'
-    | '/roles/new'
+    | '/_app'
+    | '/_app/dashboard'
+    | '/_app/login'
+    | '/_app/privacy'
+    | '/_app/signup'
     | '/u/$slug'
-    | '/roles/'
+    | '/_app/'
+    | '/_app/roles/new'
     | '/api/auth/$'
+    | '/_app/roles/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
-  LoginRoute: typeof LoginRoute
-  PrivacyRoute: typeof PrivacyRoute
-  SignupRoute: typeof SignupRoute
-  RolesNewRoute: typeof RolesNewRoute
+  AppRoute: typeof AppRouteWithChildren
   USlugRoute: typeof USlugRoute
-  RolesIndexRoute: typeof RolesIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/solid-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/': {
+      id: '/_app/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/dashboard': {
-      id: '/dashboard'
+    '/_app/dashboard': {
+      id: '/_app/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/login': {
-      id: '/login'
+    '/_app/login': {
+      id: '/_app/login'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppLoginRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/privacy': {
-      id: '/privacy'
+    '/_app/privacy': {
+      id: '/_app/privacy'
       path: '/privacy'
       fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppPrivacyRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/signup': {
-      id: '/signup'
+    '/_app/signup': {
+      id: '/_app/signup'
       path: '/signup'
       fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/roles/': {
-      id: '/roles/'
-      path: '/roles'
-      fullPath: '/roles/'
-      preLoaderRoute: typeof RolesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/roles/new': {
-      id: '/roles/new'
-      path: '/roles/new'
-      fullPath: '/roles/new'
-      preLoaderRoute: typeof RolesNewRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppSignupRouteImport
+      parentRoute: typeof AppRoute
     }
     '/u/$slug': {
       id: '/u/$slug'
@@ -204,6 +198,20 @@ declare module '@tanstack/solid-router' {
       fullPath: '/u/$slug'
       preLoaderRoute: typeof USlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/roles/': {
+      id: '/_app/roles/'
+      path: '/roles'
+      fullPath: '/roles/'
+      preLoaderRoute: typeof AppRolesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/roles/new': {
+      id: '/_app/roles/new'
+      path: '/roles/new'
+      fullPath: '/roles/new'
+      preLoaderRoute: typeof AppRolesNewRouteImport
+      parentRoute: typeof AppRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -215,15 +223,31 @@ declare module '@tanstack/solid-router' {
   }
 }
 
+interface AppRouteChildren {
+  AppDashboardRoute: typeof AppDashboardRoute
+  AppLoginRoute: typeof AppLoginRoute
+  AppPrivacyRoute: typeof AppPrivacyRoute
+  AppSignupRoute: typeof AppSignupRoute
+  AppIndexRoute: typeof AppIndexRoute
+  AppRolesNewRoute: typeof AppRolesNewRoute
+  AppRolesIndexRoute: typeof AppRolesIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppDashboardRoute: AppDashboardRoute,
+  AppLoginRoute: AppLoginRoute,
+  AppPrivacyRoute: AppPrivacyRoute,
+  AppSignupRoute: AppSignupRoute,
+  AppIndexRoute: AppIndexRoute,
+  AppRolesNewRoute: AppRolesNewRoute,
+  AppRolesIndexRoute: AppRolesIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
-  LoginRoute: LoginRoute,
-  PrivacyRoute: PrivacyRoute,
-  SignupRoute: SignupRoute,
-  RolesNewRoute: RolesNewRoute,
+  AppRoute: AppRouteWithChildren,
   USlugRoute: USlugRoute,
-  RolesIndexRoute: RolesIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

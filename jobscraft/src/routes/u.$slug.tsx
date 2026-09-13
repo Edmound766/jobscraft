@@ -127,7 +127,14 @@ function PublicRoleView() {
   };
 
   return (
-    <main class="max-w-[720px] my-10 mx-auto px-5 sm:px-10">
+    <>
+      <header class="flex items-center py-5 px-5 sm:px-10 border-b border-line">
+        <Link to="/" class="flex items-center gap-2 serif text-[20px]">
+          <img src="/favicon.svg" alt="" class="w-5 h-5 rounded-[3px]" />
+          jobscraft
+        </Link>
+      </header>
+      <main class="max-w-[720px] my-10 mx-auto px-5 sm:px-10">
       <Show when={!data().role.isPublished}>
         <div class="bg-highlighter-soft border border-line rounded-[3px] px-4 py-3 mb-6 text-[14px] text-graphite">
           This page isn't published yet — only you can see it.{" "}
@@ -346,6 +353,7 @@ function PublicRoleView() {
           </div>
         </section>
       </Show>
-    </main>
+      </main>
+    </>
   );
 }
