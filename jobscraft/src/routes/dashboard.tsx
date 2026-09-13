@@ -8,6 +8,7 @@ import { createProject, deleteProject, listProjects, updateProject } from "~/lib
 import { createSkill, deleteSkill, listSkills, updateSkill } from "~/lib/skill";
 import { createEducation, deleteEducation, listEducation, updateEducation } from "~/lib/education";
 import { createCertification, deleteCertification, listCertifications, updateCertification } from "~/lib/certification";
+import { getProfile, updateProfile } from "~/lib/profile";
 import { requireUser } from "~/lib/session";
 
 const ensureAuthenticated = createServerFn({ method: "GET" }).handler(async () => {
@@ -41,6 +42,7 @@ function Dashboard() {
           My roles
         </Link>
       </div>
+      <ProfileSection />
       <OnboardingChecklist />
       <ExperiencesSection />
       <ProjectsSection />
@@ -48,6 +50,72 @@ function Dashboard() {
       <CertificationsSection />
       <SkillsSection />
     </main>
+  );
+}
+
+function ProfileSection() {
+  const [editing, setEditing] = createSignal(false);
+  const profileQuery = useQuery(() => ({
+    queryKey: ["profile"],
+    queryFn: () => getProfile(),
+  }));
+
+  return (
+    <section class="ledger-section" style={{ "--section-accent": "var(--signal)" }}>
+      <h2>Professional summary</h2>
+      <div class="ledger-rule" />
+      <Show
+        when={!editing()}
+        fallback={
+          <ProfileSummaryForm
+            initialSummary={profileQuery.data?.summary ?? ""}
+            onDone={() => setEditing(false)}
+          />
+        }
+      >
+        <Show
+          when={profileQuery.data?.summary}
+          fallback={<button class="add-toggle" onClick={() => setEditing(true)}>+ Add a professional summary</button>}
+        >
+          <p class="text-[15px] leading-[1.6] mb-2 [overflow-wrap:anywhere]">{profileQuery.data?.summary}</p>
+          <button class="add-toggle p-0" onClick={() => setEditing(true)}>Edit</button>
+        </Show>
+      </Show>
+    </section>
+  );
+}
+
+function ProfileSummaryForm(props: { initialSummary: string; onDone: () => void }) {
+  const queryClient = useQueryClient();
+  const form = createForm(() => ({
+    defaultValues: { summary: props.initialSummary },
+    onSubmit: async ({ value }) => {
+      await updateProfile({ data: { summary: value.summary } });
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+      props.onDone();
+    },
+  }));
+  const isSubmitting = form.useSelector((state) => state.isSubmitting);
+
+  return (
+    <form class="add-form" onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }}>
+      <form.Field name="summary">
+        {(field) => (
+          <textarea
+            class="input"
+            placeholder="A couple of sentences about who you are and what you do…"
+            value={field().state.value}
+            onInput={(e) => field().handleChange(e.currentTarget.value)}
+          />
+        )}
+      </form.Field>
+      <div class="add-form-actions">
+        <button type="submit" class="btn-primary" disabled={isSubmitting()}>
+          {isSubmitting() ? "Saving…" : "Save"}
+        </button>
+        <button type="button" class="add-toggle p-0" disabled={isSubmitting()} onClick={props.onDone}>Cancel</button>
+      </div>
+    </form>
   );
 }
 

@@ -155,6 +155,9 @@ function PublicRoleView() {
               <a href={`mailto:${data().author.email}`} class="underline">{data().author.email}</a>
             </p>
           </Show>
+          <Show when={data().author.summary}>
+            <p class="text-[14px] leading-[1.6] mt-2 [overflow-wrap:anywhere]">{data().author.summary}</p>
+          </Show>
           <Show when={data().isOwner}>
             <p
               class="text-graphite-soft text-[13px] mt-1"

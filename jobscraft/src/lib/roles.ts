@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/solid-start";
 import { and, desc, eq, type InferSelectModel } from "drizzle-orm";
 import { db } from "~/db";
-import { certifications, education, experiences, projects, roleViews, skills } from "~/db/schema";
+import { certifications, education, experiences, profiles, projects, roleViews, skills } from "~/db/schema";
 import { user as userTable } from "~/db/auth-schema";
 import { semanticRank } from "./agentRank";
 import { rankEntries } from "./rank";
@@ -155,12 +155,13 @@ export const getRoleView = createServerFn({ method: "GET" })
 
     const [author] = await db.select().from(userTable).where(eq(userTable.id, role.userId));
 
-    const [allExperiences, allProjects, allEducation, allCertifications, allSkills] = await Promise.all([
+    const [allExperiences, allProjects, allEducation, allCertifications, allSkills, [profileRow]] = await Promise.all([
       db.select().from(experiences).where(eq(experiences.userId, role.userId)),
       db.select().from(projects).where(eq(projects.userId, role.userId)),
       db.select().from(education).where(eq(education.userId, role.userId)),
       db.select().from(certifications).where(eq(certifications.userId, role.userId)),
       db.select().from(skills).where(eq(skills.userId, role.userId)),
+      db.select().from(profiles).where(eq(profiles.userId, role.userId)),
     ]);
 
     const selectedExperiences = allExperiences
@@ -181,7 +182,7 @@ export const getRoleView = createServerFn({ method: "GET" })
 
     return {
       role,
-      author: { name: author?.name ?? "Candidate", email: author?.email },
+      author: { name: author?.name ?? "Candidate", email: author?.email, summary: profileRow?.summary },
       isOwner,
       experiences: selectedExperiences,
       projects: selectedProjects,

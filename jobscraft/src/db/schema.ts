@@ -54,6 +54,13 @@ export const certifications = pgTable("certifications", {
   credentialUrl: text("credential_url"),
 });
 
+// Master repository — one row per user, profile-level fields not tied to a specific role view
+export const profiles = pgTable("profiles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id").notNull().unique().references(() => user.id),
+  summary: text("summary"),
+});
+
 // A published, role-tailored view generated from the master data
 export const roleViews = pgTable("role_views", {
   id: uuid("id").primaryKey().defaultRandom(),
