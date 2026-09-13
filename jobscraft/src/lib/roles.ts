@@ -14,9 +14,9 @@ function rankWithKeywords(
 ) {
   const { rankedExperiences, rankedProjects } = rankEntries(jobDescription, userExperiences, userProjects);
 
-  // keep entries with any signal; fall back to everything if nothing scored
-  const keptExperiences = rankedExperiences.filter((e) => e.score > 0);
-  const keptProjects = rankedProjects.filter((p) => p.score > 0);
+  const KEYWORD_THRESHOLD = 10; // requires at least one real tech-stack match, not just prose overlap
+  const keptExperiences = rankedExperiences.filter((e) => e.score >= KEYWORD_THRESHOLD);
+  const keptProjects = rankedProjects.filter((p) => p.score >= KEYWORD_THRESHOLD);
 
   const selectedExperienceIds = (keptExperiences.length ? keptExperiences : rankedExperiences).map((e) => e.id);
   const selectedProjectIds = (keptProjects.length ? keptProjects : rankedProjects).map((p) => p.id);
@@ -33,6 +33,8 @@ async function rankWithAgent(
   userExperiences: (InferSelectModel<typeof experiences>)[],
   userProjects: (InferSelectModel<typeof projects>)[]
 ) {
+    const SEMANTIC_THRESHOLD = 40;
+
   const entries = [
     ...userExperiences.map((e) => ({
       id: e.id,
@@ -48,6 +50,7 @@ async function rankWithAgent(
     })),
   ];
 
+
   const rankings = await semanticRank(jobDescription, entries);
   const scoreById = new Map(rankings.map((r) => [r.id, r.score]));
 
@@ -59,8 +62,8 @@ async function rankWithAgent(
     .sort((a, b) => b.score - a.score);
 
   // keep entries with any signal; fall back to everything if nothing scored
-  const keptExperiences = scoredExperiences.filter((e) => e.score > 0);
-  const keptProjects = scoredProjects.filter((p) => p.score > 0);
+  const keptExperiences = scoredExperiences.filter((e) => e.score >= SEMANTIC_THRESHOLD);
+  const keptProjects = scoredProjects.filter((p) => p.score >= SEMANTIC_THRESHOLD);
 
   const selected = [
     ...(keptExperiences.length ? keptExperiences : scoredExperiences),
