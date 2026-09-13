@@ -8,6 +8,9 @@ export const Route = createFileRoute("/u/$slug")({
     if (!data) throw notFound();
     return data;
   },
+  head: ({ loaderData }) => ({
+    meta: [{ title: loaderData ? `${loaderData.role.roleTitle} · jobscraft` : "jobscraft" }],
+  }),
   component: PublicRoleView,
 });
 

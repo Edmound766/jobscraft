@@ -20,6 +20,7 @@ export const Route = createFileRoute("/dashboard")({
       throw redirect({ to: "/login" });
     }
   },
+  head: () => ({ meta: [{ title: "Dashboard · jobscraft" }] }),
   component: Dashboard,
 });
 

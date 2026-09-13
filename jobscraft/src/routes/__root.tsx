@@ -19,10 +19,14 @@ import styleCss from '../styles/app.css?url'
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   head: () => ({
-    links: [{ rel: 'stylesheet', href: styleCss }],
+    links: [
+      { rel: 'stylesheet', href: styleCss },
+      { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+    ],
     meta:[
-      {charset:"utf-8"},
-      {name:"viewport", content:"width=device-width, initial-scale=1"}
+      {charSet:"utf-8"},
+      {name:"viewport", content:"width=device-width, initial-scale=1"},
+      {title: "jobscraft"},
     ]
   }),
   notFoundComponent: NotFound,
@@ -48,9 +52,14 @@ function RootComponent() {
     <html>
       <head>
         <HydrationScript />
-        <HeadContent />
       </head>
       <body>
+        {/* Rendered in <body>, not <head>: HeadContent uses portals into the
+            real <head>, but needs to stay part of the reactive tree that
+            re-renders on client-side navigation (per its own doc comment) —
+            placing it in <head> left the title/meta stuck on whatever the
+            first server-rendered page was. */}
+        <HeadContent />
         <QueryClientProvider client={context().queryClient}>
           <Suspense>
             <Header />

@@ -3,6 +3,7 @@ import { createSignal } from 'solid-js'
 import { authClient } from '~/lib/auth-client'
 
 export const Route = createFileRoute('/login')({
+  head: () => ({ meta: [{ title: 'Sign in · jobscraft' }] }),
   component: Login,
 })
 

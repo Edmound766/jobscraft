@@ -20,6 +20,7 @@ export const Route = createFileRoute('/roles/new')({
       throw redirect({ to: '/' })
     }
   },
+  head: () => ({ meta: [{ title: 'Tailor for a role · jobscraft' }] }),
   component: NewRole,
 })
 
