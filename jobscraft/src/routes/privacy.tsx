@@ -6,28 +6,28 @@ export const Route = createFileRoute('/privacy')({
 
 function Privacy() {
   return (
-    <div style={{ "max-width": "640px", margin: "60px auto 100px", padding: "0 40px" }}>
-      <h1 class="serif" style={{ "font-size": "32px", margin: "0 0 24px" }}>Privacy</h1>
+    <div class="max-w-[640px] mt-[60px] mx-auto mb-[100px] px-5 sm:px-10">
+      <h1 class="serif text-[32px] mb-6">Privacy</h1>
 
-      <p style={{ "font-size": "15px", "line-height": "1.7", margin: "0 0 16px" }}>
+      <p class="text-[15px] leading-[1.7] mb-4">
         JobsCraft is currently in early testing. Here's what you should know:
       </p>
 
-      <ul style={{ "font-size": "15px", "line-height": "1.7", "padding-left": "20px", margin: "0 0 16px" }}>
-        <li style={{ "margin-bottom": "12px" }}>
+      <ul class="text-[15px] leading-[1.7] pl-5 mb-4">
+        <li class="mb-3">
           <strong>What we store:</strong> your account info (email, name), the career data you enter
           (experience, projects, skills), and any tailored role pages you generate.
         </li>
-        <li style={{ "margin-bottom": "12px" }}>
+        <li class="mb-3">
           <strong>What's public:</strong> only role pages you explicitly publish are visible at their URL.
           Everything else — your dashboard, unpublished pages — is private to your account.
         </li>
-        <li style={{ "margin-bottom": "12px" }}>
+        <li class="mb-3">
           <strong>Job descriptions you paste</strong> are sent to a third-party AI service to rank your
           experience against them. We don't store the job description text beyond what's needed to
           generate your page.
         </li>
-        <li style={{ "margin-bottom": "12px" }}>
+        <li class="mb-3">
           <strong>This is a beta.</strong> We're actively building and testing — don't rely on this for
           critical data yet, and expect things to change.
         </li>
