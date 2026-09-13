@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/solid-query'
 import { createFileRoute, Link, redirect } from '@tanstack/solid-router'
 import { createServerFn } from '@tanstack/solid-start'
-import { For, Show } from 'solid-js'
+import { createSignal, For, Show } from 'solid-js'
 import { deleteRoleView, listRoleViews, togglePublish } from '~/lib/roles'
 import { requireUser } from '~/lib/session'
 
@@ -17,6 +17,7 @@ export const Route = createFileRoute('/roles/')({
       throw redirect({ to: '/login' })
     }
   },
+  head: () => ({ meta: [{ title: 'My roles · jobscraft' }] }),
   component: RoleList,
 })
 
@@ -26,20 +27,24 @@ function RoleList() {
     queryKey:["roleViews"],
     queryFn:()=>listRoleViews()
   }))
+  const [copiedId, setCopiedId] = createSignal<string | null>(null)
+  const [confirmingDeleteId, setConfirmingDeleteId] = createSignal<string | null>(null)
 
   const handleToggle = async(id:string)=>{
     await togglePublish({data:id})
     queryClient.invalidateQueries({queryKey:["roleViews"]})
   }
 
-  const copyLink = (slug:string)=>{
+  const copyLink = (id:string, slug:string)=>{
     navigator.clipboard.writeText(`${window.location.origin}/u/${slug}`)
+    setCopiedId(id)
+    setTimeout(() => setCopiedId((current) => (current === id ? null : current)), 1500)
   }
 
   const handleDelete = async(id:string)=>{
-    if (!confirm("Delete this page? This can't be undone.")) return
     await deleteRoleView({data:id})
     queryClient.invalidateQueries({queryKey:["roleViews"]})
+    setConfirmingDeleteId(null)
   }
 return (
     <div class="max-w-[720px] my-15 mx-auto px-5 sm:px-10">
@@ -61,15 +66,26 @@ return (
                 /u/{role.slug} · {role.matchScore}% match · {role.isPublished ? "Published" : "Unpublished"}
               </div>
             </div>
-            <div class="flex flex-wrap gap-2 max-w-full">
+            <div class="flex flex-wrap gap-2 max-w-full items-center">
               <Link to='/u/$slug' params={{
                 slug:role.slug
               }}   target="_blank" class="btn-secondary no-underline">View</Link>
-              <button class="btn-secondary" onClick={() => copyLink(role.slug)}>Copy link</button>
+              <button class="btn-secondary" onClick={() => copyLink(role.id, role.slug)}>
+                {copiedId() === role.id ? "Copied!" : "Copy link"}
+              </button>
               <button class="btn-secondary" onClick={() => handleToggle(role.id)}>
                 {role.isPublished ? "Unpublish" : "Publish"}
               </button>
-              <button class="remove-btn" onClick={() => handleDelete(role.id)}>Delete</button>
+              <Show
+                when={confirmingDeleteId() === role.id}
+                fallback={
+                  <button class="remove-btn" onClick={() => setConfirmingDeleteId(role.id)}>Delete</button>
+                }
+              >
+                <span class="text-[13px] text-graphite-soft">Delete?</span>
+                <button class="remove-btn" onClick={() => handleDelete(role.id)}>Yes</button>
+                <button class="remove-btn" onClick={() => setConfirmingDeleteId(null)}>Cancel</button>
+              </Show>
             </div>
           </div>
         )}
