@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from "@tanstack/solid-router";
+import { createFileRoute, Link, notFound } from "@tanstack/solid-router";
 import { createSignal, For, Show } from "solid-js";
 import { getRoleView } from "~/lib/roles";
 
@@ -17,6 +17,15 @@ function PublicRoleView() {
 
   return (
     <div style={{ "max-width": "720px", margin: "60px auto 100px", padding: "0 40px" }}>
+      <Show when={!data().role.isPublished}>
+        <div style={{
+          background: "var(--highlighter-soft)", border: "1px solid var(--line)", "border-radius": "3px",
+          padding: "12px 16px", "margin-bottom": "24px", "font-size": "13.5px", color: "var(--graphite)"
+        }}>
+          This page isn't published yet — only you can see it.{" "}
+          <Link to="/roles" style={{ "text-decoration": "underline" }}>Publish it from My roles</Link>.
+        </div>
+      </Show>
       <div style={{ display: "flex", "justify-content": "space-between", "align-items": "center", "margin-bottom": "40px" }}>
         <div>
           <h1 class="serif" style={{ "font-size": "28px", margin: "0 0 4px" }}>{data().role.roleTitle}</h1>

@@ -4,7 +4,7 @@ import { db } from "~/db";
 import { experiences, projects, roleViews } from "~/db/schema";
 import { semanticRank } from "./agentRank";
 import { rankEntries } from "./rank";
-import { requireUser } from "./session";
+import { getOptionalUser, requireUser } from "./session";
 import { generateUniqueSlug } from "./slug";
 
 function rankWithKeywords(
@@ -131,7 +131,13 @@ export const getRoleView = createServerFn({ method: "GET" })
   .validator((slug: string) => slug)
   .handler(async ({ data: slug }) => {
     const [role] = await db.select().from(roleViews).where(eq(roleViews.slug, slug));
-    if (!role || !role.isPublished) return null;
+    if (!role) return null;
+
+    if (!role.isPublished) {
+      // unpublished: only the owner may view it (as a preview)
+      const session = await getOptionalUser(); // see below
+      if (!session || session.id !== role.userId) return null;
+    }
 
     const [allExperiences, allProjects] = await Promise.all([
       db.select().from(experiences).where(eq(experiences.userId, role.userId)),
@@ -148,8 +154,6 @@ export const getRoleView = createServerFn({ method: "GET" })
 
     return { role, experiences: selectedExperiences, projects: selectedProjects };
   });
-
-
 export const listRoleViews= createServerFn({method:"GET"})
 .handler(async()=>{
   const user = await requireUser()
