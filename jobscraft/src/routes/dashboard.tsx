@@ -25,16 +25,16 @@ export const Route = createFileRoute("/dashboard")({
 
 function Dashboard() {
   return (
-    <main style={{ "max-width": "760px", margin: "0 auto", padding: "48px 40px 96px" }}>
-      <h1 style={{ "font-size": "30px", margin: "0 0 8px" }}>Dashboard</h1>
-      <p style={{ color: "var(--graphite-soft)", "font-size": "15px", margin: "0 0 24px" }}>
+    <main class="max-w-[760px] mx-auto pt-12 px-5 sm:px-10 pb-24">
+      <h1 class="text-[30px] mb-2">Dashboard</h1>
+      <p class="text-graphite-soft text-[15px] mb-6">
         Your career repository — add it once, we'll match it to any role later.
       </p>
-      <div style={{ display: "flex", gap: "12px", margin: "0 0 48px" }}>
-        <Link to="/roles/new" class="btn-primary" style={{ "text-decoration": "none" }}>
+      <div class="flex flex-wrap gap-3 mb-12">
+        <Link to="/roles/new" class="btn-primary no-underline">
           Tailor for a role
         </Link>
-        <Link to="/roles" class="btn-secondary" style={{ "text-decoration": "none" }}>
+        <Link to="/roles" class="btn-secondary no-underline">
           My roles
         </Link>
       </div>
@@ -127,7 +127,7 @@ function ExperienceRow(props: {
             </div>
           </Show>
         </div>
-        <div style={{ display: "flex", gap: "8px", "flex-shrink": "0" }}>
+        <div class="flex gap-2 shrink-0">
           <button class="btn-secondary" onClick={() => setEditing(true)}>Edit</button>
           <button class="remove-btn" onClick={() => props.onDelete(props.exp.id)}>Remove</button>
         </div>
@@ -216,7 +216,7 @@ function ExperiencesSection() {
           </form.Field>
           <div class="add-form-actions">
             <button type="submit" class="btn-primary">Add experience</button>
-            <button type="button" class="add-toggle" style={{ padding: "0" }} onClick={() => setIsAdding(false)}>Cancel</button>
+            <button type="button" class="add-toggle p-0" onClick={() => setIsAdding(false)}>Cancel</button>
           </div>
         </form>
       </Show>
@@ -314,7 +314,7 @@ function ProjectRow(props: {
             </div>
           </Show>
         </div>
-        <div style={{ display: "flex", gap: "8px", "flex-shrink": "0" }}>
+        <div class="flex gap-2 shrink-0">
           <button class="btn-secondary" onClick={() => setEditing(true)}>Edit</button>
           <button class="remove-btn" onClick={() => props.onDelete(props.proj.id)}>Remove</button>
         </div>
@@ -403,7 +403,7 @@ function ProjectsSection() {
           </div>
           <div class="add-form-actions">
             <button type="submit" class="btn-primary">Add project</button>
-            <button type="button" class="add-toggle" style={{ padding: "0" }} onClick={() => setIsAdding(false)}>Cancel</button>
+            <button type="button" class="add-toggle p-0" onClick={() => setIsAdding(false)}>Cancel</button>
           </div>
         </form>
       </Show>
@@ -433,13 +433,12 @@ function SkillRow(props: {
       fallback={
         <form
           onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }}
-          style={{ display: "inline-flex", gap: "6px", "align-items": "center" }}
+          class="inline-flex gap-1.5 items-center"
         >
           <form.Field name="name">
             {(field) => (
               <input
-                class="input"
-                style={{ width: "140px" }}
+                class="input w-[140px]"
                 value={field().state.value}
                 onInput={(e) => field().handleChange(e.currentTarget.value)}
               />
@@ -491,7 +490,7 @@ function SkillsSection() {
         when={(skillsQuery.data ?? []).length > 0}
         fallback={<p class="ledger-empty">No skills yet — add your first one below.</p>}
       >
-        <div class="tag-row" style={{ "--tag-bg": "var(--highlighter-soft)", "margin-top": "0" }}>
+        <div class="tag-row mt-0" style={{ "--tag-bg": "var(--highlighter-soft)" }}>
           <For each={skillsQuery.data ?? []}>
             {(skill) => <SkillRow skill={skill} onDelete={handleDelete} />}
           </For>
@@ -510,7 +509,7 @@ function SkillsSection() {
           </form.Field>
           <div class="add-form-actions">
             <button type="submit" class="btn-primary">Add skill</button>
-            <button type="button" class="add-toggle" style={{ padding: "0" }} onClick={() => setIsAdding(false)}>Cancel</button>
+            <button type="button" class="add-toggle p-0" onClick={() => setIsAdding(false)}>Cancel</button>
           </div>
         </form>
       </Show>
