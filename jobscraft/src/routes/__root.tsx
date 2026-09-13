@@ -31,10 +31,10 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function NotFound() {
   return (
-    <div style={{ "max-width": "420px", margin: "0 auto", padding: "96px 24px" }}>
-      <h1 style={{ "font-size": "26px", margin: "0 0 8px" }}>Page not found</h1>
+    <div class="max-w-[420px] mx-auto py-24 px-6">
+      <h1 class="text-[26px] mb-2">Page not found</h1>
       <div class="ledger-rule" style={{ "--section-accent": "var(--ember)" }} />
-      <p style={{ color: "var(--graphite-soft)", "font-size": "14px", "line-height": "1.6" }}>
+      <p class="text-graphite-soft text-[14px] leading-[1.6]">
         There's nothing at this address. It may have been unpublished or the link may be wrong.
       </p>
     </div>
