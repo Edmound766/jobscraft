@@ -52,6 +52,7 @@ function ExperienceRow(props: {
 }) {
   const queryClient = useQueryClient();
   const [editing, setEditing] = createSignal(false);
+  const [isDeleting, setIsDeleting] = createSignal(false);
 
   const form = createForm(() => ({
     defaultValues: {
@@ -78,6 +79,7 @@ function ExperienceRow(props: {
       setEditing(false);
     },
   }));
+  const isSubmitting = form.useSelector((state) => state.isSubmitting);
 
   return (
     <Show
@@ -107,8 +109,10 @@ function ExperienceRow(props: {
             {(field) => <input class="input" placeholder="Tech stack, comma separated" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
           </form.Field>
           <div class="add-form-actions">
-            <button type="submit" class="btn-primary">Save</button>
-            <button type="button" class="btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
+            <button type="submit" class="btn-primary" disabled={isSubmitting()}>
+              {isSubmitting() ? "Saving…" : "Save"}
+            </button>
+            <button type="button" class="btn-secondary" disabled={isSubmitting()} onClick={() => setEditing(false)}>Cancel</button>
           </div>
         </form>
       }
@@ -129,8 +133,14 @@ function ExperienceRow(props: {
           </Show>
         </div>
         <div class="flex gap-2 shrink-0">
-          <button class="btn-secondary" onClick={() => setEditing(true)}>Edit</button>
-          <button class="remove-btn" onClick={() => props.onDelete(props.exp.id)}>Remove</button>
+          <button class="btn-secondary" disabled={isDeleting()} onClick={() => setEditing(true)}>Edit</button>
+          <button
+            class="remove-btn"
+            disabled={isDeleting()}
+            onClick={async () => { setIsDeleting(true); await props.onDelete(props.exp.id); }}
+          >
+            {isDeleting() ? "Removing…" : "Remove"}
+          </button>
         </div>
       </div>
     </Show>
@@ -166,6 +176,7 @@ function ExperiencesSection() {
       setIsAdding(false);
     },
   }));
+  const isSubmitting = form.useSelector((state) => state.isSubmitting);
 
   const handleDelete = async (id: string) => {
     await deleteExperience({ data: id });
@@ -216,8 +227,10 @@ function ExperiencesSection() {
             {(field) => <input placeholder="Tech stack, comma separated" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
           </form.Field>
           <div class="add-form-actions">
-            <button type="submit" class="btn-primary">Add experience</button>
-            <button type="button" class="add-toggle p-0" onClick={() => setIsAdding(false)}>Cancel</button>
+            <button type="submit" class="btn-primary" disabled={isSubmitting()}>
+              {isSubmitting() ? "Adding…" : "Add experience"}
+            </button>
+            <button type="button" class="add-toggle p-0" disabled={isSubmitting()} onClick={() => setIsAdding(false)}>Cancel</button>
           </div>
         </form>
       </Show>
@@ -231,6 +244,7 @@ function ProjectRow(props: {
 }) {
   const queryClient = useQueryClient();
   const [editing, setEditing] = createSignal(false);
+  const [isDeleting, setIsDeleting] = createSignal(false);
 
   const form = createForm(() => ({
     defaultValues: {
@@ -257,6 +271,7 @@ function ProjectRow(props: {
       setEditing(false);
     },
   }));
+  const isSubmitting = form.useSelector((state) => state.isSubmitting);
 
   return (
     <Show
@@ -286,8 +301,10 @@ function ProjectRow(props: {
             </form.Field>
           </div>
           <div class="add-form-actions">
-            <button type="submit" class="btn-primary">Save</button>
-            <button type="button" class="btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
+            <button type="submit" class="btn-primary" disabled={isSubmitting()}>
+              {isSubmitting() ? "Saving…" : "Save"}
+            </button>
+            <button type="button" class="btn-secondary" disabled={isSubmitting()} onClick={() => setEditing(false)}>Cancel</button>
           </div>
         </form>
       }
@@ -316,8 +333,14 @@ function ProjectRow(props: {
           </Show>
         </div>
         <div class="flex gap-2 shrink-0">
-          <button class="btn-secondary" onClick={() => setEditing(true)}>Edit</button>
-          <button class="remove-btn" onClick={() => props.onDelete(props.proj.id)}>Remove</button>
+          <button class="btn-secondary" disabled={isDeleting()} onClick={() => setEditing(true)}>Edit</button>
+          <button
+            class="remove-btn"
+            disabled={isDeleting()}
+            onClick={async () => { setIsDeleting(true); await props.onDelete(props.proj.id); }}
+          >
+            {isDeleting() ? "Removing…" : "Remove"}
+          </button>
         </div>
       </div>
     </Show>
@@ -353,6 +376,7 @@ function ProjectsSection() {
       setIsAdding(false);
     },
   }));
+  const isSubmitting = form.useSelector((state) => state.isSubmitting);
 
   const handleDelete = async (id: string) => {
     await deleteProject({ data: id });
@@ -403,8 +427,10 @@ function ProjectsSection() {
             </form.Field>
           </div>
           <div class="add-form-actions">
-            <button type="submit" class="btn-primary">Add project</button>
-            <button type="button" class="add-toggle p-0" onClick={() => setIsAdding(false)}>Cancel</button>
+            <button type="submit" class="btn-primary" disabled={isSubmitting()}>
+              {isSubmitting() ? "Adding…" : "Add project"}
+            </button>
+            <button type="button" class="add-toggle p-0" disabled={isSubmitting()} onClick={() => setIsAdding(false)}>Cancel</button>
           </div>
         </form>
       </Show>
@@ -418,6 +444,7 @@ function SkillRow(props: {
 }) {
   const queryClient = useQueryClient();
   const [editing, setEditing] = createSignal(false);
+  const [isDeleting, setIsDeleting] = createSignal(false);
 
   const form = createForm(() => ({
     defaultValues: { name: props.skill.name },
@@ -427,6 +454,7 @@ function SkillRow(props: {
       setEditing(false);
     },
   }));
+  const isSubmitting = form.useSelector((state) => state.isSubmitting);
 
   return (
     <Show
@@ -445,15 +473,27 @@ function SkillRow(props: {
               />
             )}
           </form.Field>
-          <button type="submit" class="btn-primary">Save</button>
-          <button type="button" class="btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
+          <button type="submit" class="btn-primary" disabled={isSubmitting()}>
+            {isSubmitting() ? "Saving…" : "Save"}
+          </button>
+          <button type="button" class="btn-secondary" disabled={isSubmitting()} onClick={() => setEditing(false)}>Cancel</button>
         </form>
       }
     >
       <span class="tag tag-removable">
         {props.skill.name}
-        <button class="tag-remove" aria-label={`Edit ${props.skill.name}`} onClick={() => setEditing(true)}>✎</button>
-        <button class="tag-remove" aria-label={`Remove ${props.skill.name}`} onClick={() => props.onDelete(props.skill.id)}>×</button>
+        <button
+          class="tag-remove disabled:opacity-50"
+          disabled={isDeleting()}
+          aria-label={`Edit ${props.skill.name}`}
+          onClick={() => setEditing(true)}
+        >✎</button>
+        <button
+          class="tag-remove disabled:opacity-50"
+          disabled={isDeleting()}
+          aria-label={`Remove ${props.skill.name}`}
+          onClick={async () => { setIsDeleting(true); await props.onDelete(props.skill.id); }}
+        >×</button>
       </span>
     </Show>
   );
@@ -476,6 +516,7 @@ function SkillsSection() {
       setIsAdding(false);
     },
   }));
+  const isSubmitting = form.useSelector((state) => state.isSubmitting);
 
   const handleDelete = async (id: string) => {
     await deleteSkill({ data: id });
@@ -509,8 +550,10 @@ function SkillsSection() {
             {(field) => <input placeholder="Skill name" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
           </form.Field>
           <div class="add-form-actions">
-            <button type="submit" class="btn-primary">Add skill</button>
-            <button type="button" class="add-toggle p-0" onClick={() => setIsAdding(false)}>Cancel</button>
+            <button type="submit" class="btn-primary" disabled={isSubmitting()}>
+              {isSubmitting() ? "Adding…" : "Add skill"}
+            </button>
+            <button type="button" class="add-toggle p-0" disabled={isSubmitting()} onClick={() => setIsAdding(false)}>Cancel</button>
           </div>
         </form>
       </Show>
