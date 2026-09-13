@@ -173,7 +173,7 @@
   }
 
   .tag-remove {
-    @apply bg-transparent border-none p-0 text-graphite-soft text-[13px] leading-none hover:text-ember;
+    @apply bg-transparent border-none p-1 inline-flex items-center justify-center text-graphite-soft text-[13px] leading-none hover:text-ember;
   }
 
   .remove-btn {

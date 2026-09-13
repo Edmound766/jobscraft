@@ -56,7 +56,7 @@ function NewRole() {
 
   const canSubmit = () => !!(experienceQuery.data?.length || projectQuery.data?.length)
   return (
-    <div class="max-w-[640px] mt-[60px] mx-auto mb-[100px] px-5 sm:px-10">
+    <main class="max-w-[640px] mt-[60px] mx-auto mb-[100px] px-5 sm:px-10">
       <h1 class="text-[28px] mb-2">Tailor for a role</h1>
       <p class="text-graphite-soft text-[15px] mt-2 mb-8">
         Paste a job description — we'll pick your best-matching experience and projects and publish a page for it.
@@ -112,6 +112,6 @@ function NewRole() {
   </Show>
 </button>
       </form>
-    </div>
+    </main>
   )
 }

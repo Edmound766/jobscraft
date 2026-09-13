@@ -35,13 +35,13 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function NotFound() {
   return (
-    <div class="max-w-[420px] mx-auto py-24 px-6">
+    <main class="max-w-[420px] mx-auto py-24 px-6">
       <h1 class="text-[28px] mb-2">Page not found</h1>
       <div class="ledger-rule" style={{ "--section-accent": "var(--ember)" }} />
       <p class="text-graphite-soft text-[14px] leading-[1.6]">
         There's nothing at this address. It may have been unpublished or the link may be wrong.
       </p>
-    </div>
+    </main>
   )
 }
 
@@ -49,7 +49,7 @@ function RootComponent() {
   const context = Route.useRouteContext()
 
   return (
-    <html>
+    <html lang="en">
       <head>
         <HydrationScript />
       </head>

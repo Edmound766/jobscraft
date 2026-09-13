@@ -4,7 +4,7 @@ export const Route = createFileRoute('/')({ component: App })
 
 function App() {
   return (
- <div>
+ <main>
       <section class="max-w-[720px] mt-20 mx-auto mb-[100px] px-5 sm:px-10 text-center">
         <h1 class="text-[28px] sm:text-[40px] mb-[18px]">
           Stop reformatting your résumé for every job.
@@ -62,6 +62,6 @@ function App() {
       <footer class="max-w-[1040px] mx-auto mb-15 px-5 sm:px-10 text-center">
         <Link to="/privacy" class="text-graphite-soft text-[13px]">Privacy</Link>
       </footer>
-    </div>
+    </main>
   )
 }

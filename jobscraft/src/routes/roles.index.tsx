@@ -53,7 +53,7 @@ function RoleList() {
     setDeletingId(null)
   }
 return (
-    <div class="max-w-[720px] my-15 mx-auto px-5 sm:px-10">
+    <main class="max-w-[720px] my-15 mx-auto px-5 sm:px-10">
       <div class="flex flex-wrap justify-between items-center gap-3 mb-6">
         <h1 class="serif text-[28px]">Your tailored pages</h1>
         <Link to="/roles/new" class="btn-primary no-underline">New role</Link>
@@ -100,6 +100,6 @@ return (
           </div>
         )}
       </For>
-    </div>
+    </main>
   );
 }

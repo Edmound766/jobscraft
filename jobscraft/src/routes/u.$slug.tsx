@@ -19,7 +19,7 @@ function PublicRoleView() {
   const [view, setView] = createSignal<"interactive" | "minimal">(data().role.defaultView);
 
   return (
-    <div class="max-w-[720px] my-15 mx-auto px-5 sm:px-10">
+    <main class="max-w-[720px] my-15 mx-auto px-5 sm:px-10">
       <Show when={!data().role.isPublished}>
         <div class="bg-highlighter-soft border border-line rounded-[3px] px-4 py-3 mb-6 text-[14px] text-graphite">
           This page isn't published yet — only you can see it.{" "}
@@ -101,6 +101,6 @@ function PublicRoleView() {
           </For>
         </section>
       </Show>
-    </div>
+    </main>
   );
 }

@@ -37,7 +37,7 @@ function Login() {
   }
 
   return (
-    <section class="auth-shell">
+    <main class="auth-shell">
       <h1>Sign in</h1>
       <div class="ledger-rule" style={{ "--section-accent": "var(--signal)" }} />
       <p class="auth-intro">Your career repository, wherever you left it.</p>
@@ -83,6 +83,6 @@ function Login() {
       <p class="auth-switch">
         New here? <Link to="/signup">Create an account</Link>
       </p>
-    </section>
+    </main>
   )
 }

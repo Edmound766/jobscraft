@@ -39,7 +39,7 @@ function Signup() {
   }
 
   return (
-    <section class="auth-shell">
+    <main class="auth-shell">
       <h1>Create your account</h1>
       <div class="ledger-rule" style={{ "--section-accent": "var(--signal)" }} />
       <p class="auth-intro">Build your career once — use it everywhere.</p>
@@ -95,6 +95,6 @@ function Signup() {
       <p class="auth-switch">
         Already have an account? <Link to="/login">Sign in</Link>
       </p>
-    </section>
+    </main>
   )
 }
