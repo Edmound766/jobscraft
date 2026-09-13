@@ -3,9 +3,9 @@ import { createServerFn } from "@tanstack/solid-start";
 import { createSignal, For, Show } from "solid-js";
 import { createForm } from "@tanstack/solid-form";
 import { useQuery, useQueryClient } from "@tanstack/solid-query";
-import { createExperience, deleteExperience, listExperiences } from "~/lib/experience";
-import { createProject, deleteProject, listProjects } from "~/lib/project";
-import { createSkill, deleteSkill, listSkills } from "~/lib/skill";
+import { createExperience, deleteExperience, listExperiences, updateExperience } from "~/lib/experience";
+import { createProject, deleteProject, listProjects, updateProject } from "~/lib/project";
+import { createSkill, deleteSkill, listSkills, updateSkill } from "~/lib/skill";
 import { requireUser } from "~/lib/session";
 
 const ensureAuthenticated = createServerFn({ method: "GET" }).handler(async () => {
@@ -42,6 +42,97 @@ function Dashboard() {
       <ProjectsSection />
       <SkillsSection />
     </main>
+  );
+}
+
+function ExperienceRow(props: {
+  exp: Awaited<ReturnType<typeof listExperiences>>[number];
+  onDelete: (id: string) => void;
+}) {
+  const queryClient = useQueryClient();
+  const [editing, setEditing] = createSignal(false);
+
+  const form = createForm(() => ({
+    defaultValues: {
+      title: props.exp.title,
+      company: props.exp.company,
+      startDate: props.exp.startDate,
+      endDate: props.exp.endDate ?? "",
+      bulletsRaw: props.exp.bullets.join("\n"),
+      techStackRaw: props.exp.techStack.join(", "),
+    },
+    onSubmit: async ({ value }) => {
+      await updateExperience({
+        data: {
+          id: props.exp.id,
+          title: value.title,
+          company: value.company,
+          startDate: value.startDate,
+          endDate: value.endDate || undefined,
+          bullets: value.bulletsRaw.split("\n").map((s) => s.trim()).filter(Boolean),
+          techStack: value.techStackRaw.split(",").map((s) => s.trim()).filter(Boolean),
+        },
+      });
+      queryClient.invalidateQueries({ queryKey: ["experiences"] });
+      setEditing(false);
+    },
+  }));
+
+  return (
+    <Show
+      when={!editing()}
+      fallback={
+        <form class="add-form" onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }}>
+          <div class="add-form-row">
+            <form.Field name="title">
+              {(field) => <input class="input" placeholder="Title" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+            <form.Field name="company">
+              {(field) => <input class="input" placeholder="Company" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+          </div>
+          <div class="add-form-row">
+            <form.Field name="startDate">
+              {(field) => <input class="input" placeholder="Start date" type="date" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+            <form.Field name="endDate">
+              {(field) => <input class="input" placeholder="End date (blank if current)" type="date" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+          </div>
+          <form.Field name="bulletsRaw">
+            {(field) => <textarea class="input" placeholder="One bullet per line" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+          </form.Field>
+          <form.Field name="techStackRaw">
+            {(field) => <input class="input" placeholder="Tech stack, comma separated" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+          </form.Field>
+          <div class="add-form-actions">
+            <button type="submit" class="btn-primary">Save</button>
+            <button type="button" class="btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
+          </div>
+        </form>
+      }
+    >
+      <div class="ledger-row">
+        <div class="ledger-row-main">
+          <div class="ledger-row-title">{props.exp.title} — {props.exp.company}</div>
+          <div class="ledger-row-meta">{props.exp.startDate} — {props.exp.endDate || "Present"}</div>
+          <Show when={props.exp.bullets.length > 0}>
+            <ul class="ledger-row-bullets">
+              <For each={props.exp.bullets}>{(bullet) => <li>{bullet}</li>}</For>
+            </ul>
+          </Show>
+          <Show when={props.exp.techStack.length > 0}>
+            <div class="tag-row" style={{ "--tag-bg": "var(--signal-soft)" }}>
+              <For each={props.exp.techStack}>{(tech) => <span class="tag">{tech}</span>}</For>
+            </div>
+          </Show>
+        </div>
+        <div style={{ display: "flex", gap: "8px", "flex-shrink": "0" }}>
+          <button class="btn-secondary" onClick={() => setEditing(true)}>Edit</button>
+          <button class="remove-btn" onClick={() => props.onDelete(props.exp.id)}>Remove</button>
+        </div>
+      </div>
+    </Show>
   );
 }
 
@@ -90,25 +181,7 @@ function ExperiencesSection() {
         fallback={<p class="ledger-empty">No experience yet — add your first role below.</p>}
       >
         <For each={experiencesQuery.data ?? []}>
-          {(exp) => (
-            <div class="ledger-row">
-              <div class="ledger-row-main">
-                <div class="ledger-row-title">{exp.title} — {exp.company}</div>
-                <div class="ledger-row-meta">{exp.startDate} — {exp.endDate || "Present"}</div>
-                <Show when={exp.bullets.length > 0}>
-                  <ul class="ledger-row-bullets">
-                    <For each={exp.bullets}>{(bullet) => <li>{bullet}</li>}</For>
-                  </ul>
-                </Show>
-                <Show when={exp.techStack.length > 0}>
-                  <div class="tag-row" style={{ "--tag-bg": "var(--signal-soft)" }}>
-                    <For each={exp.techStack}>{(tech) => <span class="tag">{tech}</span>}</For>
-                  </div>
-                </Show>
-              </div>
-              <button class="remove-btn" onClick={() => handleDelete(exp.id)}>Remove</button>
-            </div>
-          )}
+          {(exp) => <ExperienceRow exp={exp} onDelete={handleDelete} />}
         </For>
       </Show>
 
@@ -148,6 +221,105 @@ function ExperiencesSection() {
         </form>
       </Show>
     </section>
+  );
+}
+
+function ProjectRow(props: {
+  proj: Awaited<ReturnType<typeof listProjects>>[number];
+  onDelete: (id: string) => void;
+}) {
+  const queryClient = useQueryClient();
+  const [editing, setEditing] = createSignal(false);
+
+  const form = createForm(() => ({
+    defaultValues: {
+      name: props.proj.name,
+      description: props.proj.description,
+      liveUrl: props.proj.liveUrl ?? "",
+      repoUrl: props.proj.repoUrl ?? "",
+      techStackRaw: props.proj.techStack.join(", "),
+      metrics: props.proj.metrics ?? "",
+    },
+    onSubmit: async ({ value }) => {
+      await updateProject({
+        data: {
+          id: props.proj.id,
+          name: value.name,
+          description: value.description,
+          liveUrl: value.liveUrl || undefined,
+          repoUrl: value.repoUrl || undefined,
+          techStack: value.techStackRaw.split(",").map((s) => s.trim()).filter(Boolean),
+          metrics: value.metrics || undefined,
+        },
+      });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      setEditing(false);
+    },
+  }));
+
+  return (
+    <Show
+      when={!editing()}
+      fallback={
+        <form class="add-form" onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }}>
+          <form.Field name="name">
+            {(field) => <input class="input" placeholder="Name" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+          </form.Field>
+          <form.Field name="description">
+            {(field) => <textarea class="input" placeholder="Description" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+          </form.Field>
+          <div class="add-form-row">
+            <form.Field name="liveUrl">
+              {(field) => <input class="input" placeholder="Live URL" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+            <form.Field name="repoUrl">
+              {(field) => <input class="input" placeholder="Repo URL" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+          </div>
+          <div class="add-form-row">
+            <form.Field name="techStackRaw">
+              {(field) => <input class="input" placeholder="Tech stack, comma separated" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+            <form.Field name="metrics">
+              {(field) => <input class="input" placeholder="Metrics" value={field().state.value} onInput={(e) => field().handleChange(e.currentTarget.value)} />}
+            </form.Field>
+          </div>
+          <div class="add-form-actions">
+            <button type="submit" class="btn-primary">Save</button>
+            <button type="button" class="btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
+          </div>
+        </form>
+      }
+    >
+      <div class="ledger-row">
+        <div class="ledger-row-main">
+          <div class="ledger-row-title">{props.proj.name}</div>
+          <div class="ledger-row-meta">{props.proj.description}</div>
+          <Show when={props.proj.techStack.length > 0}>
+            <div class="tag-row" style={{ "--tag-bg": "var(--ember-soft)" }}>
+              <For each={props.proj.techStack}>{(tech) => <span class="tag">{tech}</span>}</For>
+            </div>
+          </Show>
+          <Show when={props.proj.metrics}>
+            <div class="ledger-row-metric">{props.proj.metrics}</div>
+          </Show>
+          <Show when={props.proj.liveUrl || props.proj.repoUrl}>
+            <div class="ledger-row-links">
+              <Show when={props.proj.liveUrl}>
+                <a href={props.proj.liveUrl!} target="_blank" rel="noreferrer">Live</a>
+              </Show>
+              <Show when={props.proj.repoUrl}>
+                <a href={props.proj.repoUrl!} target="_blank" rel="noreferrer">Code</a>
+              </Show>
+            </div>
+          </Show>
+        </div>
+        <div style={{ display: "flex", gap: "8px", "flex-shrink": "0" }}>
+          <button class="btn-secondary" onClick={() => setEditing(true)}>Edit</button>
+          <button class="remove-btn" onClick={() => props.onDelete(props.proj.id)}>Remove</button>
+        </div>
+      </div>
+    </Show>
   );
 }
 
@@ -196,33 +368,7 @@ function ProjectsSection() {
         fallback={<p class="ledger-empty">No projects yet — add your first one below.</p>}
       >
         <For each={projectsQuery.data ?? []}>
-          {(proj) => (
-            <div class="ledger-row">
-              <div class="ledger-row-main">
-                <div class="ledger-row-title">{proj.name}</div>
-                <div class="ledger-row-meta">{proj.description}</div>
-                <Show when={proj.techStack.length > 0}>
-                  <div class="tag-row" style={{ "--tag-bg": "var(--ember-soft)" }}>
-                    <For each={proj.techStack}>{(tech) => <span class="tag">{tech}</span>}</For>
-                  </div>
-                </Show>
-                <Show when={proj.metrics}>
-                  <div class="ledger-row-metric">{proj.metrics}</div>
-                </Show>
-                <Show when={proj.liveUrl || proj.repoUrl}>
-                  <div class="ledger-row-links">
-                    <Show when={proj.liveUrl}>
-                      <a href={proj.liveUrl!} target="_blank" rel="noreferrer">Live</a>
-                    </Show>
-                    <Show when={proj.repoUrl}>
-                      <a href={proj.repoUrl!} target="_blank" rel="noreferrer">Code</a>
-                    </Show>
-                  </div>
-                </Show>
-              </div>
-              <button class="remove-btn" onClick={() => handleDelete(proj.id)}>Remove</button>
-            </div>
-          )}
+          {(proj) => <ProjectRow proj={proj} onDelete={handleDelete} />}
         </For>
       </Show>
 
@@ -265,6 +411,54 @@ function ProjectsSection() {
   );
 }
 
+function SkillRow(props: {
+  skill: Awaited<ReturnType<typeof listSkills>>[number];
+  onDelete: (id: string) => void;
+}) {
+  const queryClient = useQueryClient();
+  const [editing, setEditing] = createSignal(false);
+
+  const form = createForm(() => ({
+    defaultValues: { name: props.skill.name },
+    onSubmit: async ({ value }) => {
+      await updateSkill({ data: { id: props.skill.id, name: value.name } });
+      queryClient.invalidateQueries({ queryKey: ["skills"] });
+      setEditing(false);
+    },
+  }));
+
+  return (
+    <Show
+      when={!editing()}
+      fallback={
+        <form
+          onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }}
+          style={{ display: "inline-flex", gap: "6px", "align-items": "center" }}
+        >
+          <form.Field name="name">
+            {(field) => (
+              <input
+                class="input"
+                style={{ width: "140px" }}
+                value={field().state.value}
+                onInput={(e) => field().handleChange(e.currentTarget.value)}
+              />
+            )}
+          </form.Field>
+          <button type="submit" class="btn-primary">Save</button>
+          <button type="button" class="btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
+        </form>
+      }
+    >
+      <span class="tag tag-removable">
+        {props.skill.name}
+        <button class="tag-remove" aria-label={`Edit ${props.skill.name}`} onClick={() => setEditing(true)}>✎</button>
+        <button class="tag-remove" aria-label={`Remove ${props.skill.name}`} onClick={() => props.onDelete(props.skill.id)}>×</button>
+      </span>
+    </Show>
+  );
+}
+
 function SkillsSection() {
   const queryClient = useQueryClient();
   const [isAdding, setIsAdding] = createSignal(false);
@@ -299,18 +493,7 @@ function SkillsSection() {
       >
         <div class="tag-row" style={{ "--tag-bg": "var(--highlighter-soft)", "margin-top": "0" }}>
           <For each={skillsQuery.data ?? []}>
-            {(skill) => (
-              <span class="tag tag-removable">
-                {skill.name}
-                <button
-                  class="tag-remove"
-                  aria-label={`Remove ${skill.name}`}
-                  onClick={() => handleDelete(skill.id)}
-                >
-                  ×
-                </button>
-              </span>
-            )}
+            {(skill) => <SkillRow skill={skill} onDelete={handleDelete} />}
           </For>
         </div>
       </Show>

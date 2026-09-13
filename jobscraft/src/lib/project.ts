@@ -26,3 +26,20 @@ export const deleteProject = createServerFn({ method: "POST" })
     const user = await requireUser();
     await db.delete(projects).where(and(eq(projects.id, id), eq(projects.userId, user.id)));
   });
+
+export const updateProject = createServerFn({ method: "POST" })
+  .validator((d: {
+    id: string; name: string; description: string; liveUrl?: string; repoUrl?: string;
+    techStack: string[]; metrics?: string;
+  }) => d)
+  .handler(async ({ data }) => {
+    const user = await requireUser();
+    const { id, ...updates } = data;
+    const [row] = await db
+      .update(projects)
+      .set(updates)
+      .where(and(eq(projects.id, id), eq(projects.userId, user.id)))
+      .returning();
+    if (!row) throw new Error("not found");
+    return row;
+  });

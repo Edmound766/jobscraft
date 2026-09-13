@@ -26,3 +26,21 @@ export const deleteExperience = createServerFn({ method: "POST" })
     const user = await requireUser();
     await db.delete(experiences).where(and(eq(experiences.id, id), eq(experiences.userId, user.id)));
   });
+
+
+export const updateExperience = createServerFn({ method: "POST" })
+  .validator((d: {
+    id: string; title: string; company: string; startDate: string; endDate?: string;
+    bullets: string[]; techStack: string[];
+  }) => d)
+  .handler(async ({ data }) => {
+    const user = await requireUser();
+    const { id, ...updates } = data;
+    const [row] = await db
+      .update(experiences)
+      .set(updates)
+      .where(and(eq(experiences.id, id), eq(experiences.userId, user.id)))
+      .returning();
+    if (!row) throw new Error("not found");
+    return row;
+  });

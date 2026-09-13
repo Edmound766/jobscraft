@@ -23,3 +23,17 @@ export const deleteSkill = createServerFn({ method: "POST" })
     const user = await requireUser();
     await db.delete(skills).where(and(eq(skills.id, id), eq(skills.userId, user.id)));
   });
+
+export const updateSkill = createServerFn({ method: "POST" })
+  .validator((d: { id: string; name: string }) => d)
+  .handler(async ({ data }) => {
+    const user = await requireUser();
+    const { id, ...updates } = data;
+    const [row] = await db
+      .update(skills)
+      .set(updates)
+      .where(and(eq(skills.id, id), eq(skills.userId, user.id)))
+      .returning();
+    if (!row) throw new Error("not found");
+    return row;
+  });
