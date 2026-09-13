@@ -127,7 +127,7 @@ function PublicRoleView() {
   };
 
   return (
-    <main class="max-w-[720px] my-15 mx-auto px-5 sm:px-10">
+    <main class="max-w-[720px] my-10 mx-auto px-5 sm:px-10">
       <Show when={!data().role.isPublished}>
         <div class="bg-highlighter-soft border border-line rounded-[3px] px-4 py-3 mb-6 text-[14px] text-graphite">
           This page isn't published yet — only you can see it.{" "}
@@ -135,7 +135,7 @@ function PublicRoleView() {
         </div>
       </Show>
 
-      <div class="flex flex-wrap justify-between items-start gap-4 mb-8 pb-6 border-b border-line">
+      <div class="flex flex-wrap justify-between items-start gap-4 mb-6 pb-4 border-b border-line">
         <div class="flex-1 min-w-[200px]">
           <h1 class="serif text-[28px] mb-1 [overflow-wrap:anywhere]">{data().author.name}</h1>
           <Show
@@ -149,6 +149,11 @@ function PublicRoleView() {
             }
           >
             <p class="text-[16px] text-graphite-soft [overflow-wrap:anywhere]">{data().role.roleTitle}</p>
+          </Show>
+          <Show when={data().author.email}>
+            <p class="text-graphite-soft text-[13px] mt-1">
+              <a href={`mailto:${data().author.email}`} class="underline">{data().author.email}</a>
+            </p>
           </Show>
           <Show when={data().isOwner}>
             <p
@@ -188,8 +193,8 @@ function PublicRoleView() {
         </div>
       </div>
 
-      <section class="mb-8">
-        <h3 class="serif text-[21px] mb-3">Experience</h3>
+      <section class="mb-6">
+        <h3 class="serif text-[21px] mb-2">Experience</h3>
         <Show
           when={!editMode()}
           fallback={
@@ -203,18 +208,18 @@ function PublicRoleView() {
         >
           <For each={data().experiences}>
             {(exp, i) => (
-              <div classList={{ "pt-4 border-t border-line": i() > 0 }} class="pb-4">
+              <div classList={{ "pt-3 border-t border-line": i() > 0 }} class="pb-3">
                 <div class="flex flex-wrap gap-2 justify-between">
                   <strong class="min-w-0 [overflow-wrap:anywhere]">{exp.title}</strong>
                   <span class="text-graphite-soft text-[13px] shrink-0">
                     {exp.startDate} — {exp.endDate ?? "present"}
                   </span>
                 </div>
-                <div class="text-graphite-soft text-[13px] mb-2 [overflow-wrap:anywhere]">{exp.company}</div>
+                <div class="text-graphite-soft text-[13px] mb-1.5 [overflow-wrap:anywhere]">{exp.company}</div>
 
                 <Show when={view() === "interactive"}>
-                  <ul class="mb-2 pl-[18px]">
-                    <For each={exp.bullets}>{(b) => <li class="text-[14px] leading-[1.7]">{b}</li>}</For>
+                  <ul class="mb-1.5 pl-[18px]">
+                    <For each={exp.bullets}>{(b) => <li class="text-[14px] leading-[1.5]">{b}</li>}</For>
                   </ul>
                 </Show>
 
@@ -230,8 +235,8 @@ function PublicRoleView() {
       </section>
 
       <Show when={data().projects.length || editMode()}>
-        <section class="mb-8">
-          <h3 class="serif text-[21px] mb-3">Proof of work</h3>
+        <section class="mb-6">
+          <h3 class="serif text-[21px] mb-2">Proof of work</h3>
           <Show
             when={!editMode()}
             fallback={
@@ -245,10 +250,10 @@ function PublicRoleView() {
           >
             <For each={data().projects}>
               {(proj, i) => (
-                <div classList={{ "pt-4 border-t border-line": i() > 0 }} class="pb-4">
+                <div classList={{ "pt-3 border-t border-line": i() > 0 }} class="pb-3">
                   <strong class="[overflow-wrap:anywhere]">{proj.name}</strong>
                   <Show when={view() === "interactive"}>
-                    <p class="text-[14px] leading-[1.6] text-graphite-soft mt-1">{proj.description}</p>
+                    <p class="text-[14px] leading-[1.5] text-graphite-soft mt-1">{proj.description}</p>
                     <Show when={proj.metrics}>
                       <p class="text-[13px] text-signal mt-1">{proj.metrics}</p>
                     </Show>
@@ -265,8 +270,8 @@ function PublicRoleView() {
       </Show>
 
       <Show when={data().education.length || editMode()}>
-        <section class="mb-8">
-          <h3 class="serif text-[21px] mb-3">Education</h3>
+        <section class="mb-6">
+          <h3 class="serif text-[21px] mb-2">Education</h3>
           <Show
             when={!editMode()}
             fallback={
@@ -280,7 +285,7 @@ function PublicRoleView() {
           >
             <For each={data().education}>
               {(edu, i) => (
-                <div classList={{ "pt-4 border-t border-line": i() > 0 }} class="pb-4 flex flex-wrap justify-between gap-2">
+                <div classList={{ "pt-3 border-t border-line": i() > 0 }} class="pb-3 flex flex-wrap justify-between gap-2">
                   <div class="min-w-0">
                     <strong class="[overflow-wrap:anywhere]">{edu.degree} — {edu.school}</strong>
                     <Show when={edu.fieldOfStudy}>
@@ -298,8 +303,8 @@ function PublicRoleView() {
       </Show>
 
       <Show when={data().certifications.length || editMode()}>
-        <section class="mb-8">
-          <h3 class="serif text-[21px] mb-3">Certifications</h3>
+        <section class="mb-6">
+          <h3 class="serif text-[21px] mb-2">Certifications</h3>
           <Show
             when={!editMode()}
             fallback={
@@ -313,7 +318,7 @@ function PublicRoleView() {
           >
             <For each={data().certifications}>
               {(cert, i) => (
-                <div classList={{ "pt-4 border-t border-line": i() > 0 }} class="pb-4 flex flex-wrap justify-between gap-2">
+                <div classList={{ "pt-3 border-t border-line": i() > 0 }} class="pb-3 flex flex-wrap justify-between gap-2">
                   <div class="min-w-0">
                     <strong class="[overflow-wrap:anywhere]">{cert.name} — {cert.issuer}</strong>
                     <Show when={cert.credentialUrl}>
@@ -331,8 +336,8 @@ function PublicRoleView() {
       </Show>
 
       <Show when={data().skills.length}>
-        <section class="mb-8">
-          <h3 class="serif text-[21px] mb-3">Skills</h3>
+        <section class="mb-6">
+          <h3 class="serif text-[21px] mb-2">Skills</h3>
           <div class="flex gap-1.5 flex-wrap">
             <For each={data().skills}>{(skill) => <span class="tag">{skill.name}</span>}</For>
           </div>
