@@ -91,12 +91,14 @@ button {
 .ledger-row-title {
   font-size: 16px;
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
 .ledger-row-meta {
   color: var(--graphite-soft);
   font-size: 13px;
   margin-top: 2px;
+  overflow-wrap: anywhere;
 }
 
 .ledger-row-bullets {
@@ -105,6 +107,7 @@ button {
   color: var(--graphite-soft);
   font-size: 14px;
   line-height: 1.7;
+  overflow-wrap: anywhere;
 }
 
 .ledger-row-links {
@@ -135,6 +138,8 @@ button {
   border-radius: 3px;
   background: var(--tag-bg, var(--vellum-deep));
   color: var(--graphite-soft);
+  overflow-wrap: anywhere;
+  max-width: 100%;
 }
 
 .tag-removable {
@@ -327,4 +332,53 @@ textarea.input { resize: vertical; }
 @keyframes dot-pulse {
   0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
   30% { opacity: 1; transform: translateY(-2px); }
+}
+
+/* Header / mobile nav */
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font-size: 18px;
+  line-height: 1;
+  padding: 6px 10px;
+}
+
+.site-nav {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+@media (max-width: 639px) {
+  .nav-toggle { display: inline-flex; }
+
+  .site-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 1px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 200px;
+    background: var(--vellum);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 16px;
+    z-index: 20;
+  }
+
+  .site-nav.open { display: flex; }
 }

@@ -26,14 +26,14 @@ function PublicRoleView() {
           <Link to="/roles" style={{ "text-decoration": "underline" }}>Publish it from My roles</Link>.
         </div>
       </Show>
-      <div style={{ display: "flex", "justify-content": "space-between", "align-items": "center", "margin-bottom": "40px" }}>
-        <div>
-          <h1 class="serif" style={{ "font-size": "28px", margin: "0 0 4px" }}>{data().role.roleTitle}</h1>
+      <div style={{ display: "flex", "flex-wrap": "wrap", "justify-content": "space-between", "align-items": "center", gap: "16px", "margin-bottom": "40px" }}>
+        <div style={{ flex: "1", "min-width": "200px" }}>
+          <h1 class="serif" style={{ "font-size": "28px", margin: "0 0 4px", "overflow-wrap": "anywhere" }}>{data().role.roleTitle}</h1>
           <p style={{ color: "var(--graphite-soft)", "font-size": "13px", margin: 0 }}>
             Match score: {data().role.matchScore}%
           </p>
         </div>
-        <div style={{ display: "flex", gap: "8px" }}>
+        <div style={{ display: "flex", gap: "8px", "flex-shrink": "0" }}>
           <button
             class={view() === "interactive" ? "btn-primary" : "btn-secondary"}
             onClick={() => setView("interactive")}
@@ -53,13 +53,13 @@ function PublicRoleView() {
               background: "#FBFAF6", border: "1px solid var(--line)", "border-radius": "3px",
               padding: "20px 22px", "margin-bottom": "14px"
             }}>
-              <div style={{ display: "flex", "justify-content": "space-between" }}>
-                <strong>{exp.title}</strong>
-                <span style={{ color: "var(--graphite-soft)", "font-size": "12.5px" }}>
+              <div style={{ display: "flex", "flex-wrap": "wrap", gap: "8px", "justify-content": "space-between" }}>
+                <strong style={{ "min-width": "0", "overflow-wrap": "anywhere" }}>{exp.title}</strong>
+                <span style={{ color: "var(--graphite-soft)", "font-size": "12.5px", "flex-shrink": "0" }}>
                   {exp.startDate} — {exp.endDate ?? "present"}
                 </span>
               </div>
-              <div style={{ color: "var(--graphite-soft)", "font-size": "13px", "margin-bottom": "10px" }}>{exp.company}</div>
+              <div style={{ color: "var(--graphite-soft)", "font-size": "13px", "margin-bottom": "10px", "overflow-wrap": "anywhere" }}>{exp.company}</div>
 
               <Show when={view() === "interactive"}>
                 <ul style={{ margin: "0 0 10px", "padding-left": "18px" }}>

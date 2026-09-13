@@ -57,15 +57,15 @@ return (
           <div style={{
             background: "#FBFAF6", border: "1px solid var(--line)", "border-radius": "3px",
             padding: "18px 22px", "margin-bottom": "12px",
-            display: "flex", "justify-content": "space-between", "align-items": "center"
+            display: "flex", "flex-wrap": "wrap", "justify-content": "space-between", "align-items": "center", gap: "12px"
           }}>
-            <div>
-              <strong>{role.roleTitle}</strong>
-              <div style={{ "font-size": "12.5px", color: "var(--graphite-soft)" }}>
+            <div style={{ flex: "1", "min-width": "0" }}>
+              <strong style={{ "overflow-wrap": "anywhere" }}>{role.roleTitle}</strong>
+              <div style={{ "font-size": "12.5px", color: "var(--graphite-soft)", "overflow-wrap": "anywhere" }}>
                 /u/{role.slug} · {role.matchScore}% match · {role.isPublished ? "Published" : "Unpublished"}
               </div>
             </div>
-            <div style={{ display: "flex", gap: "8px" }}>
+            <div style={{ display: "flex", "flex-wrap": "wrap", gap: "8px", "max-width": "100%" }}>
               <Link to='/u/$slug' params={{
                 slug:role.slug
               }}   target="_blank" class="btn-secondary" style={{ "text-decoration": "none" }}>View</Link>
