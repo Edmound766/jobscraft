@@ -55,9 +55,9 @@ function NewRole() {
 
   const canSubmit = () => !!(experienceQuery.data?.length || projectQuery.data?.length)
   return (
-    <div style={{ "max-width": "640px", margin: "60px auto 100px", padding: "0 40px" }}>
-      <h1>Tailor for a role</h1>
-      <p style={{ color: "var(--graphite-soft)", "font-size": "15px", margin: "8px 0 32px" }}>
+    <div class="max-w-[640px] mt-[60px] mx-auto mb-[100px] px-5 sm:px-10">
+      <h1 class="text-[28px] mb-2">Tailor for a role</h1>
+      <p class="text-graphite-soft text-[15px] mt-2 mb-8">
         Paste a job description — we'll pick your best-matching experience and projects and publish a page for it.
       </p>
       <form
@@ -66,7 +66,7 @@ function NewRole() {
           if (!canSubmit()) return
           form.handleSubmit()
         }}
-        style={{ display: "flex", "flex-direction": "column", gap: "16px" }}
+        class="flex flex-col gap-4"
       >
         <form.Field name="roleTitle">
           {(field) => (
@@ -92,12 +92,12 @@ function NewRole() {
           )}
         </form.Field>
 <Show when={!canSubmit()}>
-  <p style={{ color: "var(--ember)", "font-size": "13px" }}>
+  <p class="text-ember text-[13px]">
     Add at least one experience or project in your dashboard before tailoring a role.
   </p>
 </Show>
 <Show when={submitError()}>
-  <p style={{ color: "var(--ember)", "font-size": "13px" }}>
+  <p class="text-ember text-[13px]">
     Something went wrong — try again.
   </p>
 </Show>
