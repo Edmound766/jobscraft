@@ -16,24 +16,21 @@ function PublicRoleView() {
   const [view, setView] = createSignal<"interactive" | "minimal">(data().role.defaultView);
 
   return (
-    <div style={{ "max-width": "720px", margin: "60px auto 100px", padding: "0 40px" }}>
+    <div class="max-w-[720px] my-15 mx-auto px-5 sm:px-10">
       <Show when={!data().role.isPublished}>
-        <div style={{
-          background: "var(--highlighter-soft)", border: "1px solid var(--line)", "border-radius": "3px",
-          padding: "12px 16px", "margin-bottom": "24px", "font-size": "13.5px", color: "var(--graphite)"
-        }}>
+        <div class="bg-highlighter-soft border border-line rounded-[3px] px-4 py-3 mb-6 text-[13.5px] text-graphite">
           This page isn't published yet — only you can see it.{" "}
-          <Link to="/roles" style={{ "text-decoration": "underline" }}>Publish it from My roles</Link>.
+          <Link to="/roles" class="underline">Publish it from My roles</Link>.
         </div>
       </Show>
-      <div style={{ display: "flex", "flex-wrap": "wrap", "justify-content": "space-between", "align-items": "center", gap: "16px", "margin-bottom": "40px" }}>
-        <div style={{ flex: "1", "min-width": "200px" }}>
-          <h1 class="serif" style={{ "font-size": "28px", margin: "0 0 4px", "overflow-wrap": "anywhere" }}>{data().role.roleTitle}</h1>
-          <p style={{ color: "var(--graphite-soft)", "font-size": "13px", margin: 0 }}>
+      <div class="flex flex-wrap justify-between items-center gap-4 mb-10">
+        <div class="flex-1 min-w-[200px]">
+          <h1 class="serif text-[28px] mb-1 [overflow-wrap:anywhere]">{data().role.roleTitle}</h1>
+          <p class="text-graphite-soft text-[13px]">
             Match score: {data().role.matchScore}%
           </p>
         </div>
-        <div style={{ display: "flex", gap: "8px", "flex-shrink": "0" }}>
+        <div class="flex gap-2 shrink-0">
           <button
             class={view() === "interactive" ? "btn-primary" : "btn-secondary"}
             onClick={() => setView("interactive")}
@@ -45,35 +42,29 @@ function PublicRoleView() {
         </div>
       </div>
 
-      <section style={{ "margin-bottom": "36px" }}>
-        <h3 class="serif">Experience</h3>
+      <section class="mb-9">
+        <h3 class="serif text-[21px] mb-2">Experience</h3>
         <For each={data().experiences}>
           {(exp) => (
-            <div style={{
-              background: "#FBFAF6", border: "1px solid var(--line)", "border-radius": "3px",
-              padding: "20px 22px", "margin-bottom": "14px"
-            }}>
-              <div style={{ display: "flex", "flex-wrap": "wrap", gap: "8px", "justify-content": "space-between" }}>
-                <strong style={{ "min-width": "0", "overflow-wrap": "anywhere" }}>{exp.title}</strong>
-                <span style={{ color: "var(--graphite-soft)", "font-size": "12.5px", "flex-shrink": "0" }}>
+            <div class="bg-[#FBFAF6] border border-line rounded-[3px] px-[22px] py-5 mb-[14px]">
+              <div class="flex flex-wrap gap-2 justify-between">
+                <strong class="min-w-0 [overflow-wrap:anywhere]">{exp.title}</strong>
+                <span class="text-graphite-soft text-[12.5px] shrink-0">
                   {exp.startDate} — {exp.endDate ?? "present"}
                 </span>
               </div>
-              <div style={{ color: "var(--graphite-soft)", "font-size": "13px", "margin-bottom": "10px", "overflow-wrap": "anywhere" }}>{exp.company}</div>
+              <div class="text-graphite-soft text-[13px] mb-2.5 [overflow-wrap:anywhere]">{exp.company}</div>
 
               <Show when={view() === "interactive"}>
-                <ul style={{ margin: "0 0 10px", "padding-left": "18px" }}>
-                  <For each={exp.bullets}>{(b) => <li style={{ "font-size": "13.5px", "line-height": "1.7" }}>{b}</li>}</For>
+                <ul class="mb-2.5 pl-[18px]">
+                  <For each={exp.bullets}>{(b) => <li class="text-[13.5px] leading-[1.7]">{b}</li>}</For>
                 </ul>
               </Show>
 
-              <div style={{ display: "flex", gap: "6px", "flex-wrap": "wrap" }}>
+              <div class="flex gap-1.5 flex-wrap">
                 <For each={exp.techStack}>
                   {(tech) => (
-                    <span style={{
-                      background: "var(--highlighter-soft)", "font-size": "11.5px",
-                      padding: "3px 8px", "border-radius": "3px"
-                    }}>{tech}</span>
+                    <span class="bg-highlighter-soft text-[11.5px] px-2 py-[3px] rounded-[3px]">{tech}</span>
                   )}
                 </For>
               </div>
@@ -84,21 +75,18 @@ function PublicRoleView() {
 
       <Show when={data().projects.length}>
         <section>
-          <h3 class="serif">Proof of work</h3>
+          <h3 class="serif text-[21px] mb-2">Proof of work</h3>
           <For each={data().projects}>
             {(proj) => (
-              <div style={{
-                background: "#FBFAF6", border: "1px solid var(--line)", "border-radius": "3px",
-                padding: "20px 22px", "margin-bottom": "14px"
-              }}>
-                <strong>{proj.name}</strong>
+              <div class="bg-[#FBFAF6] border border-line rounded-[3px] px-[22px] py-5 mb-[14px]">
+                <strong class="[overflow-wrap:anywhere]">{proj.name}</strong>
                 <Show when={view() === "interactive"}>
-                  <p style={{ "font-size": "13.5px", "line-height": "1.6", color: "var(--graphite-soft)" }}>{proj.description}</p>
+                  <p class="text-[13.5px] leading-[1.6] text-graphite-soft">{proj.description}</p>
                   <Show when={proj.metrics}>
-                    <p style={{ "font-size": "13px", color: "var(--signal)" }}>{proj.metrics}</p>
+                    <p class="text-[13px] text-signal">{proj.metrics}</p>
                   </Show>
                 </Show>
-                <div style={{ display: "flex", gap: "14px", "font-size": "13px", "margin-top": "8px" }}>
+                <div class="flex gap-3.5 text-[13px] mt-2">
                   <Show when={proj.liveUrl}><a href={proj.liveUrl!} target="_blank">Live demo →</a></Show>
                   <Show when={proj.repoUrl}><a href={proj.repoUrl!} target="_blank">Repository →</a></Show>
                 </div>
