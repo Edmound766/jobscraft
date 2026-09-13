@@ -42,33 +42,29 @@ function RoleList() {
     queryClient.invalidateQueries({queryKey:["roleViews"]})
   }
 return (
-    <div style={{ "max-width": "720px", margin: "60px auto", padding: "0 40px" }}>
-      <div style={{ display: "flex", "justify-content": "space-between", "align-items": "center", "margin-bottom": "24px" }}>
-        <h1 class="serif">Your tailored pages</h1>
-        <Link to="/roles/new" class="btn-primary" style={{ "text-decoration": "none" }}>New role</Link>
+    <div class="max-w-[720px] my-15 mx-auto px-5 sm:px-10">
+      <div class="flex flex-wrap justify-between items-center gap-3 mb-6">
+        <h1 class="serif text-[28px]">Your tailored pages</h1>
+        <Link to="/roles/new" class="btn-primary no-underline">New role</Link>
       </div>
 
       <Show when={rolesQuery.data?.length === 0}>
-        <p style={{ color: "var(--graphite-soft)" }}>No pages yet — tailor one from your dashboard.</p>
+        <p class="text-graphite-soft">No pages yet — tailor one from your dashboard.</p>
       </Show>
 
       <For each={rolesQuery.data ?? []}>
         {(role) => (
-          <div style={{
-            background: "#FBFAF6", border: "1px solid var(--line)", "border-radius": "3px",
-            padding: "18px 22px", "margin-bottom": "12px",
-            display: "flex", "flex-wrap": "wrap", "justify-content": "space-between", "align-items": "center", gap: "12px"
-          }}>
-            <div style={{ flex: "1", "min-width": "0" }}>
-              <strong style={{ "overflow-wrap": "anywhere" }}>{role.roleTitle}</strong>
-              <div style={{ "font-size": "12.5px", color: "var(--graphite-soft)", "overflow-wrap": "anywhere" }}>
+          <div class="bg-[#FBFAF6] border border-line rounded-[3px] px-[22px] py-[18px] mb-3 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex-1 min-w-0">
+              <strong class="[overflow-wrap:anywhere]">{role.roleTitle}</strong>
+              <div class="text-[12.5px] text-graphite-soft [overflow-wrap:anywhere]">
                 /u/{role.slug} · {role.matchScore}% match · {role.isPublished ? "Published" : "Unpublished"}
               </div>
             </div>
-            <div style={{ display: "flex", "flex-wrap": "wrap", gap: "8px", "max-width": "100%" }}>
+            <div class="flex flex-wrap gap-2 max-w-full">
               <Link to='/u/$slug' params={{
                 slug:role.slug
-              }}   target="_blank" class="btn-secondary" style={{ "text-decoration": "none" }}>View</Link>
+              }}   target="_blank" class="btn-secondary no-underline">View</Link>
               <button class="btn-secondary" onClick={() => copyLink(role.slug)}>Copy link</button>
               <button class="btn-secondary" onClick={() => handleToggle(role.id)}>
                 {role.isPublished ? "Unpublish" : "Publish"}
