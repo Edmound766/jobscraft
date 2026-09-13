@@ -30,9 +30,14 @@ function Dashboard() {
       <p style={{ color: "var(--graphite-soft)", "font-size": "15px", margin: "0 0 24px" }}>
         Your career repository — add it once, we'll match it to any role later.
       </p>
-      <Link to="/roles/new" class="btn-primary" style={{ "text-decoration": "none", display: "inline-block", margin: "0 0 48px" }}>
-        Tailor for a role
-      </Link>
+      <div style={{ display: "flex", gap: "12px", margin: "0 0 48px" }}>
+        <Link to="/roles/new" class="btn-primary" style={{ "text-decoration": "none" }}>
+          Tailor for a role
+        </Link>
+        <Link to="/roles" class="btn-secondary" style={{ "text-decoration": "none" }}>
+          My roles
+        </Link>
+      </div>
       <ExperiencesSection />
       <ProjectsSection />
       <SkillsSection />

@@ -14,6 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as RolesIndexRouteImport } from './routes/roles.index'
 import { Route as RolesNewRouteImport } from './routes/roles.new'
 import { Route as USlugRouteImport } from './routes/u.$slug'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -43,6 +44,11 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RolesIndexRoute = RolesIndexRouteImport.update({
+  id: '/roles/',
+  path: '/roles/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RolesNewRoute = RolesNewRouteImport.update({
   id: '/roles/new',
   path: '/roles/new',
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/roles/new': typeof RolesNewRoute
   '/u/$slug': typeof USlugRoute
+  '/roles/': typeof RolesIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/roles/new': typeof RolesNewRoute
   '/u/$slug': typeof USlugRoute
+  '/roles': typeof RolesIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/roles/new': typeof RolesNewRoute
   '/u/$slug': typeof USlugRoute
+  '/roles/': typeof RolesIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/roles/new'
     | '/u/$slug'
+    | '/roles/'
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,6 +120,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/roles/new'
     | '/u/$slug'
+    | '/roles'
     | '/api/auth/$'
   id:
     | '__root__'
@@ -120,6 +131,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/roles/new'
     | '/u/$slug'
+    | '/roles/'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
@@ -131,6 +143,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   RolesNewRoute: typeof RolesNewRoute
   USlugRoute: typeof USlugRoute
+  RolesIndexRoute: typeof RolesIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -171,6 +184,13 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/roles/': {
+      id: '/roles/'
+      path: '/roles'
+      fullPath: '/roles/'
+      preLoaderRoute: typeof RolesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/roles/new': {
       id: '/roles/new'
       path: '/roles/new'
@@ -203,6 +223,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   RolesNewRoute: RolesNewRoute,
   USlugRoute: USlugRoute,
+  RolesIndexRoute: RolesIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

@@ -1,11 +1,11 @@
 import { createServerFn } from "@tanstack/solid-start";
+import { and, desc, eq, type InferSelectModel } from "drizzle-orm";
 import { db } from "~/db";
 import { experiences, projects, roleViews } from "~/db/schema";
-import { eq, type InferSelectModel } from "drizzle-orm";
+import { semanticRank } from "./agentRank";
+import { rankEntries } from "./rank";
 import { requireUser } from "./session";
 import { generateUniqueSlug } from "./slug";
-import { rankEntries } from "./rank";
-import { semanticRank } from "./agentRank";
 
 function rankWithKeywords(
   jobDescription: string,
@@ -145,3 +145,22 @@ export const getRoleView = createServerFn({ method: "GET" })
 
     return { role, experiences: selectedExperiences, projects: selectedProjects };
   });
+
+
+export const listRoleViews= createServerFn({method:"GET"})
+.handler(async()=>{
+  const user = await requireUser()
+  return db.select()
+  .from(roleViews)
+  .where(eq(roleViews.userId,user.id))
+  .orderBy(desc(roleViews.createdAt))
+})
+
+export const togglePublish = createServerFn({method:"POST"})
+.validator((id:string)=>id)
+.handler(async({data:id})=>{
+  const user = await requireUser()
+  const [row] = await db.select().from(roleViews).where(and(eq(roleViews.id,id),eq(roleViews.userId,user.id)))
+  if(!row) throw new Error("not found ")
+  await db.update(roleViews).set({isPublished:!row.isPublished}).where(eq(roleViews.id, id))
+})

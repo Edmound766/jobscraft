@@ -10,6 +10,7 @@ export default function Header() {
       <Link to="/" class="serif" style={{ "font-size": "20px" }}>jobscraft</Link>
       <nav style={{ display: "flex", gap: "16px", "align-items": "center" }}>
         <Link to="/dashboard">Dashboard</Link>
+        <Link to="/roles">My roles</Link>
         <Show when={!session().isPending}>
           <Show
             when={session().data?.user}
