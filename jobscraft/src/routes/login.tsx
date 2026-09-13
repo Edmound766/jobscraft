@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/solid-router'
 import { createSignal } from 'solid-js'
 import { authClient } from '~/lib/auth-client'
+import { friendlyAuthError } from '~/lib/auth-errors'
 
 export const Route = createFileRoute('/login')({
   head: () => ({ meta: [{ title: 'Sign in · jobscraft' }] }),
@@ -11,6 +12,7 @@ function Login() {
   const navigate = useNavigate()
   const [email, setEmail] = createSignal('')
   const [password, setPassword] = createSignal('')
+  const [showPassword, setShowPassword] = createSignal(false)
   const [error, setError] = createSignal('')
   const [loading, setLoading] = createSignal(false)
 
@@ -27,7 +29,7 @@ function Login() {
     setLoading(false)
 
     if (result.error) {
-      setError(result.error.message || 'Sign in failed')
+      setError(friendlyAuthError(result.error.message))
       return
     }
 
@@ -52,15 +54,25 @@ function Login() {
           />
         </div>
         <div class="field">
-          <label for="password">Password</label>
+          <div class="flex justify-between items-center">
+            <label for="password">Password</label>
+            <button
+              type="button"
+              class="text-[12px] text-graphite-soft underline"
+              onClick={() => setShowPassword((v) => !v)}
+            >
+              {showPassword() ? "Hide" : "Show"}
+            </button>
+          </div>
           <input
             id="password"
-            type="password"
+            type={showPassword() ? "text" : "password"}
             value={password()}
             onInput={(e) => setPassword(e.currentTarget.value)}
             required
             minLength={8}
           />
+          <p class="text-[12px] text-graphite-soft">At least 8 characters</p>
         </div>
         {error() && <p class="auth-error">{error()}</p>}
         <button type="submit" class="btn-primary" disabled={loading()}>
