@@ -2,7 +2,7 @@ import { createFileRoute, redirect, useNavigate } from '@tanstack/solid-router'
 import { createServerFn } from '@tanstack/solid-start'
 import { createForm } from '@tanstack/solid-form'
 import { useQuery } from '@tanstack/solid-query'
-import { Show } from 'solid-js'
+import { createSignal, Show } from 'solid-js'
 import { createRoleView } from '~/lib/roles'
 import { listExperiences } from '~/lib/experience'
 import { listProjects } from '~/lib/project'
@@ -35,11 +35,21 @@ function NewRole() {
     queryFn: () => listProjects(),
   }))
 
+  const [isSubmitting, setIsSubmitting] = createSignal(false)
+  const [submitError, setSubmitError] = createSignal(false)
+
   const form = createForm(() => ({
     defaultValues: { roleTitle: '', jobDescription: '' },
     onSubmit: async ({ value }) => {
-      const row = await createRoleView({ data: value })
-      navigate({ to: '/u/$slug', params: { slug: row.slug } })
+      setSubmitError(false)
+      setIsSubmitting(true)
+      try {
+        const row = await createRoleView({ data: value })
+        navigate({ to: '/u/$slug', params: { slug: row.slug } })
+      } catch {
+        setSubmitError(true)
+        setIsSubmitting(false)
+      }
     },
   }))
 
@@ -86,7 +96,20 @@ function NewRole() {
     Add at least one experience or project in your dashboard before tailoring a role.
   </p>
 </Show>
-<button type="submit" class="btn-primary" disabled={!canSubmit()}>Generate my page</button>
+<Show when={submitError()}>
+  <p style={{ color: "var(--ember)", "font-size": "13px" }}>
+    Something went wrong — try again.
+  </p>
+</Show>
+<button type="submit" class="btn-primary" disabled={isSubmitting() || !canSubmit()}>
+  <Show
+    when={isSubmitting()}
+    fallback="Generate my page"
+  >
+    Matching your experience
+    <span class="loading-dots"><span></span><span></span><span></span></span>
+  </Show>
+</button>
       </form>
     </div>
   )
