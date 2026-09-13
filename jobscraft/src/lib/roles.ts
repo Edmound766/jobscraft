@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/solid-start";
-import { and, desc, eq, type InferSelectModel } from "drizzle-orm";
+import { and, desc, eq, gte, type InferSelectModel } from "drizzle-orm";
 import { db } from "~/db";
 import { certifications, education, experiences, profiles, projects, roleViews, skills } from "~/db/schema";
 import { user as userTable } from "~/db/auth-schema";
@@ -84,6 +84,35 @@ export const createRoleView = createServerFn({ method: "POST" })
   .validator((d: { roleTitle: string; jobDescription: string }) => d)
   .handler(async ({ data }) => {
     const user = await requireUser();
+
+    const COOLDOWN_MS = 30_000;
+    const DAILY_LIMIT = 15;
+
+    const [lastRoleView] = await db
+      .select({ createdAt: roleViews.createdAt })
+      .from(roleViews)
+      .where(eq(roleViews.userId, user.id))
+      .orderBy(desc(roleViews.createdAt))
+      .limit(1);
+
+    if (lastRoleView) {
+      const elapsedMs = Date.now() - lastRoleView.createdAt.getTime();
+      if (elapsedMs < COOLDOWN_MS) {
+        const waitSeconds = Math.ceil((COOLDOWN_MS - elapsedMs) / 1000);
+        throw new Error(`Please wait ${waitSeconds} more second${waitSeconds === 1 ? "" : "s"} before generating another page.`);
+      }
+    }
+
+    const startOfToday = new Date();
+    startOfToday.setUTCHours(0, 0, 0, 0);
+    const todaysRoleViews = await db
+      .select({ id: roleViews.id })
+      .from(roleViews)
+      .where(and(eq(roleViews.userId, user.id), gte(roleViews.createdAt, startOfToday)));
+
+    if (todaysRoleViews.length >= DAILY_LIMIT) {
+      throw new Error(`You've reached the daily limit of ${DAILY_LIMIT} generated pages. Try again tomorrow.`);
+    }
 
     const [userExperiences, userProjects, userEducation, userCertifications] = await Promise.all([
       db.select().from(experiences).where(eq(experiences.userId, user.id)),

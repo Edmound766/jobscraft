@@ -37,18 +37,19 @@ function NewRole() {
   }))
 
   const [isSubmitting, setIsSubmitting] = createSignal(false)
-  const [submitError, setSubmitError] = createSignal(false)
+  const [submitError, setSubmitError] = createSignal('')
 
   const form = createForm(() => ({
     defaultValues: { roleTitle: '', jobDescription: '' },
     onSubmit: async ({ value }) => {
-      setSubmitError(false)
+      setSubmitError('')
       setIsSubmitting(true)
       try {
         const row = await createRoleView({ data: value })
         navigate({ to: '/u/$slug', params: { slug: row.slug } })
-      } catch {
-        setSubmitError(true)
+      } catch (err) {
+        const message = typeof (err as { message?: unknown })?.message === 'string' ? (err as { message: string }).message : ''
+        setSubmitError(message || 'Something went wrong — try again.')
         setIsSubmitting(false)
       }
     },
@@ -99,7 +100,7 @@ function NewRole() {
 </Show>
 <Show when={submitError()}>
   <p class="text-ember text-[13px]">
-    Something went wrong — try again.
+    {submitError()}
   </p>
 </Show>
 <button type="submit" class="btn-primary" disabled={isSubmitting() || !canSubmit()}>
